@@ -1,0 +1,1 @@
+# dinsos-mobile
