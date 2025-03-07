@@ -1,27 +1,32 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#f5f5f5",
   },
+
   header: {
     backgroundColor: "#25B1FF",
-    paddingVertical: 16,
+    paddingVertical: Platform.OS === "ios" ? 16 : 20,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 10,
+    
   },
   backButton: {
     marginRight: 16,
     marginTop: 10,
+    top : Platform.OS === "ios" ? 0 : 10,
   },
   headerTitle: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
     marginTop: 10,
+    top: Platform.OS === "ios" ? 0 : 10,
+    // marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
   dropdownContainer: {
     margin: 12,

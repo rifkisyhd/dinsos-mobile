@@ -1,7 +1,5 @@
-// screens/HomeScreen.js
 import { useRouter } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
-import { onPress } from 'react-native';
 import {
   View,
   Text,
@@ -10,49 +8,31 @@ import {
   ImageBackground,
   StatusBar,
   Image,
+  ScrollView,
+  TouchableOpacity,
 } from "react-native";
+import { useState } from "react";
 import {
   FontAwesome,
   EvilIcons,
   MaterialIcons,
   FontAwesome5,
 } from "@expo/vector-icons";
-import { MenuItemsList } from "./components/MenuItem";
+import { MenuItemsList, menuItems } from "./components/MenuItem";
 import { styles } from "./styles";
+// import WelcomeModal from "../welcome";
+import ImagePopup from "../components/ImagePopup";
 
-export default function HomeScreen( { onPress }) {
+export default function HomeScreen() {
   const router = useRouter();
-
-  const menuItems = [
-    {
-      id: 1,
-      title: "Program",
-      icon: <MaterialIcons name="list-alt" size={32} color="gray" />,
-      onPress: () => router.push("/program/program"),
-    },
-    {
-      id: 2,
-      title: "Layanan",
-      icon: <FontAwesome5 name="hands-helping" size={32} color="gray" />,
-      onPress: () => router.push("/layanan/layanan"),
-    },
-    {
-      id: 3,
-      title: "Perizinan",
-      icon: <MaterialIcons name="vpn-key" size={32} color="gray" />,
-      onPress: () => router.push("/perizinan/perizinan"),
-    },
-    {
-      id: 4,
-      title: "UPT",
-      icon: <FontAwesome name="building" size={32} color="gray" />,
-      onPress: () => router.push("/upt/upt"),
-    },
-  ];
+  //buat popup
+  const [modalVisible, setModalVisible] = useState(true);
 
   return (
     <View style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#3498db" />
+
+      {/* <WelcomeModal visible={modalVisible} onClose={() => setModalVisible(false)} />  */}
 
       <Text style={styles.headerText}>
         {new Date().getHours() < 12
@@ -71,6 +51,7 @@ export default function HomeScreen( { onPress }) {
         <View style={styles.searchContainer}>
           <TextInput
             placeholder="Cari ..."
+            placeholderTextColor="gray"
             style={styles.searchInput}
             onChangeText={(text) => console.log(text)}
           />
@@ -87,21 +68,31 @@ export default function HomeScreen( { onPress }) {
 
       <View>
         <Text style={styles.menuText2}>Astacita Prabowo-Gibran</Text>
-        <Image
-          source={require("../../assets/images/asa-cita.png")}
-          style={{
-            width: 370,
-            height: 175,
-            resizeMode: "contain",
-            marginTop: 10,
-            alignSelf: "center",
-          }}
+
+        <TouchableOpacity onPress={() => setModalVisible(true)}>
+          <Image
+            source={require("../../assets/images/asa-cita.png")}
+            style={{
+              width: 370,
+              height: 175,
+              resizeMode: "contain",
+              marginTop: 10,
+              alignSelf: "center",
+            }}
+          />
+        </TouchableOpacity>
+
+        {/* Popup Gambar */}
+        <ImagePopup
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          imageSource={require("../../assets/images/popup.png")}
         />
       </View>
 
       <Button
         title="Pergi ke Detail"
-        onPress={() => router.push("../detail")}
+        onPress={() => router.push("/detail")}
         style={styles.buttonStyle}
       />
     </View>

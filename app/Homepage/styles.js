@@ -1,11 +1,12 @@
 // styles/styles.js
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: "#eaeaea",
   },
+
   headerText: {
     fontSize: 20,
     fontWeight: "bold",
@@ -13,14 +14,14 @@ export const styles = StyleSheet.create({
     color: "white",
     position: "absolute",
     zIndex: 1000,
-    top: 0,
-    left: 25,
+    top: Platform.OS === "ios" ? 30 : 0,
+    marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginTop: 70,
+    marginTop: Platform.select({ ios: 90, android: 70 }), 
     position: "relative",
   },
   searchInput: {
@@ -36,9 +37,21 @@ export const styles = StyleSheet.create({
     right: 20,
     top: 3,
   },
+   // 🔥 Update menuContainer buat horizontal scrolling
+   menuContainer: {
+    flexDirection: "row",
+    paddingVertical: 15,
+    paddingHorizontal: 10,
+  },
+
+  // 🔥 Update menuItem supaya tetap terpisah rapi
+  menuItem: {
+    alignItems: "center",
+    width: 80, // Sesuaikan supaya item nggak terlalu lebar
+    marginRight: 15, // Kasih jarak antar item
+  },
   menuContainer: {
     flexDirection: "row",
-    justifyContent: "space-between",
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderRadius: 10,
@@ -47,6 +60,8 @@ export const styles = StyleSheet.create({
   menuItem: {
     alignItems: "center",
     width: "23%",
+    width: 80,
+    marginRight: 15,
   },
   iconContainer: {
     backgroundColor: "white",
@@ -63,10 +78,11 @@ export const styles = StyleSheet.create({
     fontSize: 14,
   },
   menuText2: {
-    marginLeft: 20,
+    marginTop: 20,
+    marginLeft: 10,
     color: "Black",
     fontWeight: "600",
-    fontSize: 16,
+    fontSize: 24,
   },
   buttonStyle: {
     marginTop: 20,

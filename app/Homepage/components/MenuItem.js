@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, TouchableOpacity, View, StyleSheet } from "react-native";
+import { Text, TouchableOpacity, View, ScrollView } from "react-native";
 import { useRouter } from "expo-router";
 import { FontAwesome, FontAwesome5, MaterialIcons } from "@expo/vector-icons";
 import { styles } from "../styles";
@@ -41,16 +41,29 @@ const MenuItemsList = () => {
       icon: <FontAwesome name="building" size={32} color="gray" />,
       onPress: () => router.push("/upt/upt"),
     },
+    {
+      id: 5,
+      title: "Aplikasi",
+      icon: <FontAwesome5 name="mobile-alt" size={32} color="gray" />,
+      onPress: () => router.push("/aplikasi/aplikasi"),
+    },
+    {
+      id: 6,
+      title: "Pengaduan",
+      icon: <FontAwesome name="exclamation-circle" size={32} color="gray" />,
+      onPress: () => router.push("/pengaduan/pengaduan"),
+    },
   ];
 
   return (
-    <View style={styles.menuContainer}>
-      {menuItems.map((item) => (
-        <MenuItem key={item.id} title={item.title} icon={item.icon} onPress={item.onPress} />
-      ))}
-    </View>
+    <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
+      <View style={styles.menuContainer}>
+        {menuItems.map((item) => (
+          <MenuItem key={item.id} title={item.title} icon={item.icon} onPress={item.onPress} />
+        ))}
+      </View>
+    </ScrollView>
   );
 };
-
 
 export { MenuItem, MenuItemsList };

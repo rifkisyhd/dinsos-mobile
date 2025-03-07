@@ -1,8 +1,18 @@
-import { Slot } from 'expo-router';
+// import { Slot } from 'expo-router';
+
+import { Stack } from "expo-router";
 
 export default function Layout() {
-  return <Slot />;
+  return (
+    <Stack
+      screenOptions={{
+        headerShown: false, // Bisa true kalau mau ada header
+        gestureEnabled: true, // Biar bisa swipe-back di iOS
+      }}
+    />
+  );
 }
+
 
 // import SplashScreen from "./SplashScreen";
 // import { StatusBar } from "expo-status-bar";
