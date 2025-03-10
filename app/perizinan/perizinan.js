@@ -54,11 +54,11 @@ export default function PerizinanScreen() {
         <TouchableOpacity style={styles.card}>
           <View style={styles.cardContent}>
             <View style={styles.cardTextContainer}>
-              <Text style={styles.cardTitle}>Rekomendasi</Text>
-              <Text style={styles.cardSubtitle}>Pengumpulan Uang atau Barang</Text>
+              <Text style={styles.cardTitle}>Surat</Text>
+              <Text style={styles.cardSubtitle}>Tanda Pendaftaran</Text>
             </View>
             <Image 
-              source={require('../../assets/images/surat-pengumpulan-uang.png')} 
+              source={require('../../assets/images/surat-pendaftaran.png')} 
               style={styles.cardImage}
             />
           </View>

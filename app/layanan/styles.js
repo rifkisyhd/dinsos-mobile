@@ -1,56 +1,65 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: "#f5f5f5",
-  },
-  header: {
-    backgroundColor: "#29B6F6",
-    paddingVertical: 16,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-  },
-  scrollViewContent: {
-    padding: 16,
-  },
-  card: {
-    width: "100%",
-    borderRadius: 16,
-    overflow: "hidden",
-    height: 140,
-    marginBottom: 16,
-  },
-  cardBackground: {
-    width: "100%",
-    height: "100%",
-    justifyContent: "center",
-    paddingHorizontal: 20,
-  },
-  imageStyle: {
-    resizeMode: "cover",
-  },
-  overlay: {
-    ...StyleSheet.absoluteFillObject,
-    backgroundColor: "rgba(0, 0, 0, 0.3)",
-  },
-  cardTitle: {
-    color: "white",
-    fontSize: 20,
-    fontWeight: "bold",
-  },
-  menuButton: {
-    position: "absolute",
-    right: 16,
-    top: 16,
-  },
-});
+    container: {
+      flex: 1,
+      backgroundColor: "#f5f5f5",
+    },
+    header: {
+      backgroundColor: "#33A9FF",
+      flexDirection: 'row',
+      alignItems: 'center',
+      paddingHorizontal: 16,
+      paddingVertical: 16,
+      borderBottomWidth: 1,
+      borderBottomColor: 'rgba(255, 255, 255, 0.2)',
+    },
+    backButton: {
+      marginRight: 16,
+    },
+    headerTitle: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: 'bold',
+    },
+    content: {
+      flex: 1,
+      padding: 16,
+    },
+    card: {
+        backgroundColor: "#33A9FF",
+        borderRadius: 15,
+        padding: 15,
+        shadowColor: "#000",
+        shadowOpacity: 0.2,
+        shadowOffset: { width: 0, height: 3 },
+        shadowRadius: 5,
+        elevation: 5, // Untuk shadow di Android
+        width: 340, // Sesuaikan ukuran card
+        alignSelf: "center",
+        marginVertical: 10,
+      },
+      cardContent: {
+        flexDirection: "row", // Biar gambar & teks sejajar
+        alignItems: "center",
+        justifyContent: "space-between",
+      },
+      cardTextContainer: {
+        flex: 1, // Biar teks memenuhi space dengan baik
+        paddingRight: 10, // Jarak antara teks & gambar
+      },
+      cardTitle: {
+        fontSize: 18,
+        fontWeight: "bold",
+        color: "white",
+      },
+      cardSubtitle: {
+        fontSize: 16,
+        color: "black",
+      },
+      cardImage: {
+        width: 150, // Sesuaikan ukuran gambar
+        height: 100,
+        resizeMode: "contain",
+      },
+  });

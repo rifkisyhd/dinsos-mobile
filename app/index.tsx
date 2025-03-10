@@ -1,11 +1,10 @@
 // index.js
-import HomeScreen from "./Homepage/HomeScreen";
-import { SafeAreaView } from "react-native-safe-area-context";
+import { Redirect } from "expo-router";
 
 // export default function App() {
 //   return <HomeScreen />;
 // }
 
 export default function App() {
-  return <HomeScreen onPress={() => {}} />;
+  return <Redirect href={"/(tabs)/home"} />;
 }

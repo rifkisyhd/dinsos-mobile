@@ -7,7 +7,7 @@ export const styles = StyleSheet.create({
   },
 
   header: {
-    backgroundColor: "#25B1FF",
+    backgroundColor: "#33A9FF",
     paddingVertical: Platform.OS === "ios" ? 16 : 20,
     paddingHorizontal: 16,
     flexDirection: "row",
@@ -89,14 +89,14 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     overflow: "hidden",
-  },
+},
   cardImage: {
     width: "100%",
     height: 100,
     resizeMode: "cover",
   },
   cardContent: {
-    backgroundColor: "#29B6F6",
+    backgroundColor: "#33A9FF",
     padding: 8,
     minHeight: 60,
     flexDirection: "row",
