@@ -25,8 +25,10 @@ import ImagePopup from "../components/ImagePopup";
 
 export default function HomeScreen() {
   const router = useRouter();
-  //buat popup
-  const [modalVisible, setModalVisible] = useState(true);
+
+   // Bikin state terpisah buat masing-masing popup
+   const [modalVisibleAstacita, setModalVisibleAstacita] = useState(false);
+   const [modalVisibleNawa, setModalVisibleNawa] = useState(false);
 
   return (
     <View style={[styles.container, { flex: 1 }]}>
@@ -70,10 +72,12 @@ export default function HomeScreen() {
             <MenuItemsList />
           </ImageBackground>
   
+
+  <View style={styles.main}>
           {/* Astacita */}
           <View>
             <Text style={styles.menuText2}>Astacita Prabowo-Gibran</Text>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <TouchableOpacity onPress={() => setModalVisibleAstacita(true)}>
               <Image
                 source={require("../../assets/images/asa-cita.png")}
                 style={{
@@ -87,16 +91,16 @@ export default function HomeScreen() {
             </TouchableOpacity>
   
             <ImagePopup
-              visible={modalVisible}
-              onClose={() => setModalVisible(false)}
-              imageSource={require("../../assets/images/popup.png")}
+              visible={modalVisibleAstacita}
+              onClose={() => setModalVisibleAstacita(false)}
+              imageSource={require("../../assets/images/asacita.png")}
             />
           </View>
   
           {/* Nawa Bhakti Satya */}
           <View>
             <Text style={styles.menuText2}>Nawa Bhakti Satya</Text>
-            <TouchableOpacity onPress={() => setModalVisible(true)}>
+            <TouchableOpacity onPress={() => setModalVisibleNawa(true)}>
               <Image
                 source={require("../../assets/images/nawabakti.png")}
                 style={{
@@ -110,8 +114,8 @@ export default function HomeScreen() {
             </TouchableOpacity>
   
             <ImagePopup
-              visible={modalVisible}
-              onClose={() => setModalVisible(false)}
+              visible={modalVisibleNawa}
+              onClose={() => setModalVisibleNawa(false)}
               imageSource={require("../../assets/images/popup.png")}
             />
           </View>
@@ -121,6 +125,8 @@ export default function HomeScreen() {
             onPress={() => router.push("/detail")}
             style={styles.buttonStyle}
           />
+
+          </View>
         </ScrollView>
       </SafeAreaView>
     </View>

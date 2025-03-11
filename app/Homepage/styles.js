@@ -1,4 +1,5 @@
 // styles/styles.js
+import { main } from "react-devtools";
 import { StyleSheet, Platform } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -91,5 +92,10 @@ export const styles = StyleSheet.create({
     padding: 200,
     color: "red",
     backgroundColor: "red",
+  },
+
+  main: {
+    flex: 1,
+    backgroundColor: "#eaeaea",
   },
 });
