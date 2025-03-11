@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, FontAwesome } from "@expo/vector-icons";
 
 export default function Layout() {
   return (
@@ -19,6 +19,17 @@ export default function Layout() {
           title: "Settings",
           tabBarIcon: ({ color, size }) => (
             <Ionicons name="settings" size={size} color={color} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="profil/profil"
+        options={{
+          title: "Profil",
+          tabBarLabel: "Profil",
+          tabBarIcon: ({ color, size }) => (
+            // <FontAwesome icon="fa-solid fa-id-card" size={size} color={color} />
+            <FontAwesome name="user-o" size={size} color={color} />
           ),
         }}
       />
