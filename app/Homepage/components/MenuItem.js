@@ -25,33 +25,45 @@ const MenuItemsList = () => {
     },
     {
       id: 2,
+      title: "Innovasi",
+      icon: <MaterialIcons name="lightbulb" size={32} color="gray" />,
+      onPress: () => router.push("/innovasi/innovasi"),
+    },
+    {
+      id: 3,
       title: "Layanan",
       icon: <FontAwesome5 name="hands-helping" size={32} color="gray" />,
       onPress: () => router.push("/layanan/layanan"),
     },
     {
-      id: 3,
+      id: 4,
       title: "Perizinan",
       icon: <MaterialIcons name="vpn-key" size={32} color="gray" />,
       onPress: () => router.push("/perizinan/perizinan"),
     },
     {
-      id: 4,
+      id: 5,
       title: "UPT",
       icon: <FontAwesome name="building" size={32} color="gray" />,
       onPress: () => router.push("/upt/upt"),
     },
     {
-      id: 5,
+      id: 6,
       title: "Aplikasi",
       icon: <FontAwesome5 name="mobile-alt" size={32} color="gray" />,
       onPress: () => router.push("/aplikasi/aplikasi"),
     },
     {
-      id: 6,
+      id: 7,
       title: "Pengaduan",
       icon: <FontAwesome name="exclamation-circle" size={32} color="gray" />,
       onPress: () => router.push("/pengaduan/pengaduan"),
+    },
+    {
+      id: 8,
+      title: "Kontak Kami",
+      icon: <FontAwesome name="address-book" size={32} color="gray" />,
+      onPress: () => router.push("/kontak/kontak"),
     },
   ];
 

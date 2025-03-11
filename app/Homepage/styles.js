@@ -4,7 +4,8 @@ import { StyleSheet, Platform } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#eaeaea",
+    backgroundColor: "#33A9FF",
+    // backgroundColor: "#eaeaea",
   },
 
   headerText: {
@@ -50,6 +51,7 @@ export const styles = StyleSheet.create({
     width: 80, // Sesuaikan supaya item nggak terlalu lebar
     marginRight: 15, // Kasih jarak antar item
   },
+
   menuContainer: {
     flexDirection: "row",
     paddingVertical: 15,
