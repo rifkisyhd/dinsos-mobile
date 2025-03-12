@@ -25,7 +25,7 @@ const ChatAI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef(null);
 
-  // Function to simulate sending message to backend
+  // Function backend API call
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
     

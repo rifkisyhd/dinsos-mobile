@@ -9,16 +9,16 @@ export default function Layout() {
         options={{
           title: "Home",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="home" size={size} color={color} />
+            <Ionicons name="home-outline" size={size} color={color} />
           ),
         }}
       />
       <Tabs.Screen
-        name="settings"
+        name="chat/chat"
         options={{
-          title: "Settings",
+          title: "Chat",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings" size={size} color={color} />
+            <Ionicons name="chatbox-ellipses-outline" size={size} color={color} />
           ),
         }}
       />
@@ -30,6 +30,15 @@ export default function Layout() {
           tabBarIcon: ({ color, size }) => (
             // <FontAwesome icon="fa-solid fa-id-card" size={size} color={color} />
             <FontAwesome name="user-o" size={size} color={color} />
+          ),
+        }}
+      />
+       <Tabs.Screen
+        name="settings"
+        options={{
+          title: "Settings",
+          tabBarIcon: ({ color, size }) => (
+            <Ionicons name="settings-outline" size={size} color={color} />
           ),
         }}
       />
