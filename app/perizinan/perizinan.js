@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, StatusBar } from 'react-native';
+import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, StatusBar, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { useRouter } from "expo-router";
@@ -12,6 +12,12 @@ export default function PerizinanScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
       
+      <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
+
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -63,7 +69,37 @@ export default function PerizinanScreen() {
             />
           </View>
         </TouchableOpacity>
+
+        {/* Card 4 */}
+        <TouchableOpacity style={styles.card}>
+          <View style={styles.cardContent}>
+            <View style={styles.cardTextContainer}>
+              <Text style={styles.cardTitle}>Surat</Text>
+              <Text style={styles.cardSubtitle}>Tanda Pendaftaran</Text>
+            </View>
+            <Image 
+              source={require('../../assets/images/surat-pendaftaran.png')} 
+              style={styles.cardImage}
+            />
+          </View>
+        </TouchableOpacity>
+
+        {/* Card 5 */}
+        <TouchableOpacity style={styles.card}>
+          <View style={styles.cardContent}>
+            <View style={styles.cardTextContainer}>
+              <Text style={styles.cardTitle}>Surat</Text>
+              <Text style={styles.cardSubtitle}>Tanda Pendaftaran</Text>
+            </View>
+            <Image 
+              source={require('../../assets/images/surat-pendaftaran.png')} 
+              style={styles.cardImage}
+            />
+          </View>
+        </TouchableOpacity>
       </View>
+      </ScrollView>
+
     </SafeAreaView>
   );
 }
