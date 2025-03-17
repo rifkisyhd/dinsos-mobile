@@ -9,69 +9,102 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Image
+  Image,
+  Alert
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
+import OpenAI from 'openai';
+import { OPENAI_API_KEY } from '../../config/openaiConfig';
+
+// Inisialisasi OpenAI
+const openai = new OpenAI({
+  apiKey: OPENAI_API_KEY
+});
 
 const ChatAI = () => {
   const router = useRouter();
   const [messages, setMessages] = useState([
-    { id: '1', text: 'Halo! Saya asisten AI Anda. Ada yang bisa saya bantu?', isUser: false }
+    { id: '1', text: 'Halo! Saya asisten AI Dinsos Mobile. Ada yang bisa saya bantu terkait layanan Dinas Sosial?', isUser: false }
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef(null);
 
-  // Function backend API call
+  // Format pesan untuk API OpenAI
+  const formatMessagesForOpenAI = (messages) => {
+    return messages.map(msg => ({
+      role: msg.isUser ? 'user' : 'assistant',
+      content: msg.text
+    }));
+  };
+
+  // Function untuk memanggil API OpenAI
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
     
-    // Add user message to chat history
+    // Tambahkan pesan pengguna ke riwayat chat
     const userMessage = {
       id: Date.now().toString(),
       text: inputText,
       isUser: true,
     };
     
-    setMessages([...messages, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInputText('');
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Format pesan untuk OpenAI
+      const formattedMessages = formatMessagesForOpenAI(updatedMessages);
       
-      // This is where you'll integrate with your actual backend
-      // const response = await yourBackendApiCall(inputText);
+      // Panggil API OpenAI
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // Pilih model yang sesuai
+        messages: [
+          // Berikan konteks kepada AI
+          {
+            role: "system",
+            content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. Berikan informasi yang akurat dan ramah tentang program bantuan sosial, persyaratan, dan prosedur pelayanan. Jika ditanya tentang hal di luar konteks Dinas Sosial, minta pengguna untuk mengajukan pertanyaan yang relevan dengan layanan Dinas Sosial."
+          },
+          ...formattedMessages
+        ],
+        temperature: 0.7,
+      });
       
-      // Simulate AI response
+      // Tambahkan respons AI ke riwayat chat
       const botResponse = {
         id: Date.now().toString() + '-bot',
-        text: `Saya mengerti pertanyaan Anda tentang "${inputText}". Saat ini saya dalam mode demo, tapi nanti akan terintegrasi dengan backend Anda.`,
+        text: response.choices[0].message.content,
         isUser: false,
       };
       
       setMessages(prevMessages => [...prevMessages, botResponse]);
     } catch (error) {
       console.error('Error:', error);
-      // Add error message
+      // Tambahkan pesan error
       const errorMessage = {
         id: Date.now().toString() + '-error',
-        text: 'Maaf, terjadi kesalahan. Silakan coba lagi.',
+        text: 'Maaf, terjadi kesalahan saat menghubungi server. Silakan coba lagi nanti.',
         isUser: false,
         isError: true,
       };
       
       setMessages(prevMessages => [...prevMessages, errorMessage]);
+      
+      // Tampilkan alert dengan informasi error untuk debugging
+      if (__DEV__) {
+        Alert.alert('Error', error.message || 'Unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Auto scroll to bottom when new messages arrive
+  // Auto scroll ke bawah saat ada pesan baru
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: true });
@@ -113,7 +146,7 @@ const ChatAI = () => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Asisten AI</Text>
+        <Text style={styles.headerText}>Asisten Dinsos Mobile</Text>
       </View>
       
       <FlatList
