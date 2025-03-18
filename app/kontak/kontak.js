@@ -6,7 +6,8 @@ import {
   Image, 
   TouchableOpacity, 
   Linking,
-  Platform
+  Platform,
+  SafeAreaView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
@@ -48,7 +49,7 @@ const ContactScreen = () => {
   ];
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
       <View style={styles.header}>
@@ -86,7 +87,8 @@ const ContactScreen = () => {
           ))}
         </View>
       </View>
-    </View>
+      <View style={styles.homeIndicator} />
+    </SafeAreaView>
   );
 };
 

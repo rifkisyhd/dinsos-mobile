@@ -114,16 +114,20 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light"  backgroundColor="#3498db" />
+      <StatusBar style="light" backgroundColor="#3498db" />
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>UPT</Text>
       </View>
 
+      {/* <View style={styles.main}> */}
       {/* Dropdown dengan props */}
       <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
 
@@ -149,6 +153,8 @@ export default function App() {
           ))}
         </View>
       </ScrollView>
+      {/* </View> */}
+       <View style={styles.homeIndicator} />
     </SafeAreaView>
   );
 }

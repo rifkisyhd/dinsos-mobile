@@ -6,12 +6,12 @@ export const styles = StyleSheet.create({
     backgroundColor: '#39b4ff', // Solid blue background
   },
   header: {
-    height: 60,
+    // height: 60,
     // backgroundColor: '#0084ff',
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? 20 : 30,
+    padding: 16,
+    paddingTop: Platform.OS === 'ios' ? 0 : 30,
   },
   backButton: {
     marginRight: 10,
@@ -73,4 +73,15 @@ export const styles = StyleSheet.create({
     color: 'white',
     flex: 1,
   },
+  homeIndicator: Platform.select({
+    ios: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 34,
+      backgroundColor: "#f5f5f5",
+    },
+    android: {}, // Di Android nggak ada style
+  }),
 });

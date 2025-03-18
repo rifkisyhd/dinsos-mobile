@@ -19,7 +19,7 @@ import { styles } from './styles';
 const ChatAI = () => {
   const router = useRouter();
   const [messages, setMessages] = useState([
-    { id: '1', text: 'Halo! Saya asisten AI Anda. Ada yang bisa saya bantu?', isUser: false }
+    { id: '1', text: 'Halo! Kawan Sosial. Ada yang bisa saya bantu?', isUser: false }
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -88,9 +88,9 @@ const ChatAI = () => {
       {!item.isUser && (
         <View style={styles.avatarContainer}>
           <Image 
-            source={require('../../../assets/images/ChatGPT-Logo.png')} 
+            source={require('../../../assets/images/cakji.png')} 
             style={styles.avatar}
-            defaultSource={require('../../../assets/images/ChatGPT-Logo.png')}
+            defaultSource={require('../../../assets/images/cakji.png')}
           />
         </View>
       )}
@@ -113,7 +113,7 @@ const ChatAI = () => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Asisten AI</Text>
+        <Text style={styles.headerText}>Tanya Cak J</Text>
       </View>
       
       <FlatList

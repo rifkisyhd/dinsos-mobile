@@ -99,6 +99,7 @@ export default function PerizinanScreen() {
         </TouchableOpacity>
       </View>
       </ScrollView>
+    <View style={styles.homeIndicator} />
 
     </SafeAreaView>
   );
