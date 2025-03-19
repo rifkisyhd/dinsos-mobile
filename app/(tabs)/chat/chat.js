@@ -9,12 +9,27 @@ import {
   ActivityIndicator,
   KeyboardAvoidingView,
   Platform,
-  Image
+  Image,
+  Alert
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
+import OpenAI from 'openai';
+import Constants from 'expo-constants';
+
+// Dapatkan API key dari berbagai sumber yang mungkin
+const apiKey =Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY ||
+              process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+
+// Debug log untuk membantu troubleshooting (akan muncul di console)
+console.log("OpenAI API Key tersedia:", apiKey ? "Ya" : "Tidak");
+
+// Inisialisasi OpenAI dengan API key
+const openai = new OpenAI({
+  apiKey: apiKey
+});
 
 const ChatAI = () => {
   const router = useRouter();
@@ -25,53 +40,83 @@ const ChatAI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef(null);
 
-  // Function backend API call
+  // Format pesan untuk API OpenAI
+  const formatMessagesForOpenAI = (messages) => {
+    return messages.map(msg => ({
+      role: msg.isUser ? 'user' : 'assistant',
+      content: msg.text
+    }));
+  };
+
+  // Function untuk memanggil API OpenAI
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
     
-    // Add user message to chat history
+    // Tambahkan pesan pengguna ke riwayat chat
     const userMessage = {
       id: Date.now().toString(),
       text: inputText,
       isUser: true,
     };
     
-    setMessages([...messages, userMessage]);
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInputText('');
     setIsLoading(true);
     
     try {
-      // Simulate API call delay
-      await new Promise(resolve => setTimeout(resolve, 1500));
+      // Verifikasi API key tersedia
+      if (!apiKey) {
+        throw new Error("API key tidak tersedia. Silakan periksa konfigurasi aplikasi.");
+      }
       
-      // This is where you'll integrate with your actual backend
-      // const response = await yourBackendApiCall(inputText);
+      // Format pesan untuk OpenAI
+      const formattedMessages = formatMessagesForOpenAI(updatedMessages);
       
-      // Simulate AI response
+      // Panggil API OpenAI
+      const response = await openai.chat.completions.create({
+        model: "gpt-4o", // Pilih model yang sesuai
+        messages: [
+          // Berikan konteks kepada AI
+          {
+            role: "system",
+            content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. Berikan informasi yang akurat dan ramah tentang program bantuan sosial, persyaratan, dan prosedur pelayanan. Jika ditanya tentang hal di luar konteks Dinas Sosial, minta pengguna untuk mengajukan pertanyaan yang relevan dengan layanan Dinas Sosial."
+          },
+          ...formattedMessages
+        ],
+        temperature: 0.7,
+      });
+      
+      // Tambahkan respons AI ke riwayat chat
       const botResponse = {
         id: Date.now().toString() + '-bot',
-        text: `Saya mengerti pertanyaan Anda tentang "${inputText}". Saat ini saya dalam mode demo, tapi nanti akan terintegrasi dengan backend Anda.`,
+        text: response.choices[0].message.content,
         isUser: false,
       };
       
       setMessages(prevMessages => [...prevMessages, botResponse]);
     } catch (error) {
       console.error('Error:', error);
-      // Add error message
+      // Tambahkan pesan error
       const errorMessage = {
         id: Date.now().toString() + '-error',
-        text: 'Maaf, terjadi kesalahan. Silakan coba lagi.',
+        text: 'Maaf, terjadi kesalahan saat menghubungi server. Silakan coba lagi nanti.',
         isUser: false,
         isError: true,
       };
       
       setMessages(prevMessages => [...prevMessages, errorMessage]);
+      
+      // Tampilkan alert dengan informasi error untuk debugging
+      if (__DEV__) {
+        Alert.alert('Error', error.message || 'Unknown error occurred');
+      }
     } finally {
       setIsLoading(false);
     }
   };
 
-  // Auto scroll to bottom when new messages arrive
+  // Auto scroll ke bawah saat ada pesan baru
   useEffect(() => {
     if (flatListRef.current) {
       flatListRef.current.scrollToEnd({ animated: true });

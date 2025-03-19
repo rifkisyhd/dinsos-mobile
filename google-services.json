@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "937118957960",
+    "project_id": "dinsosapp",
+    "storage_bucket": "dinsosapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:937118957960:android:b0902de42a0e23d3dcba3d",
+        "android_client_info": {
+          "package_name": "com.dinsos.catalog"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRMcJUDIH5pgjQUFSkV1Olz7eAWVqpOao"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
