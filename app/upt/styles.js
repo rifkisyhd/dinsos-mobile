@@ -9,7 +9,7 @@ export const styles = StyleSheet.create({
 
   header: {
     backgroundColor: "#33A9FF",
-    paddingVertical: Platform.OS === "ios" ? 0 : 20,
+    paddingVertical: Platform.OS === "ios" ? 20 : 25,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
@@ -17,20 +17,19 @@ export const styles = StyleSheet.create({
   },
   backButton: {
     marginRight: 16,
-    marginTop: 10,
     top: Platform.OS === "ios" ? 0 : 10,
   },
   headerTitle: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 10,
     top: Platform.OS === "ios" ? 0 : 10,
     // marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
   dropdownContainer: {
-    margin: 12,
+    padding: 5,
     position: "relative",
+    backgroundColor: "#fff",
   },
   dropdownButton: {
     flexDirection: "row",
@@ -44,6 +43,7 @@ export const styles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 16,
+    marginLeft: 8,
     color: "#333",
   },
   dropdownList: {
@@ -82,6 +82,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    backgroundColor: "#f5f5f5",
+    height: "300%",
   },
   card: {
     width: "48%",
@@ -113,9 +115,6 @@ export const styles = StyleSheet.create({
     height: 24,
     justifyContent: "center",
     alignItems: "center",
-  },
-  main: {
-    backgroundColor: "red",
   },
   homeIndicator: Platform.select({
     ios: {

@@ -115,6 +115,13 @@ export default function App() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#3498db" />
+      
+         {/* Scrollable Content */}
+         <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={true}
+        contentContainerStyle={styles.scrollViewContent}
+      >
 
       {/* Header */}
       <View style={styles.header}>
@@ -127,16 +134,12 @@ export default function App() {
         <Text style={styles.headerTitle}>UPT</Text>
       </View>
 
-      {/* <View style={styles.main}> */}
       {/* Dropdown dengan props */}
-      <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
+      <View style={styles.dropdownContainer}>
+        <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
+      </View>
 
-      {/* Scrollable Content */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={styles.scrollViewContent}
-      >
+   
         <View style={styles.gridContainer}>
           {filteredLocations.map((location) => (
             <TouchableOpacity key={location.id} style={styles.card}>
@@ -153,8 +156,7 @@ export default function App() {
           ))}
         </View>
       </ScrollView>
-      {/* </View> */}
-       <View style={styles.homeIndicator} />
+      <View style={styles.homeIndicator} />
     </SafeAreaView>
   );
 }
