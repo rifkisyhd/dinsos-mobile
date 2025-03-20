@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#fff",
     padding: 8,
     paddingHorizontal: 15,
-    borderRadius: 5,
+    borderRadius: 8,
     marginBottom: 15,
   },
   laporText: {
@@ -80,7 +80,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     paddingVertical: 8,
     paddingHorizontal: 20,
-    borderRadius: 20,
+    borderRadius: 8,
     marginBottom: 15,
   },
   urlText: {
@@ -119,7 +119,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.7)",
     paddingVertical: 8,
     paddingHorizontal: 15,
-    borderRadius: 20,
+    borderRadius: 8,
     marginBottom: 15,
   },
   playStoreIcon: {
@@ -173,4 +173,23 @@ export const styles = StyleSheet.create({
     },
     android: {}, // Di Android nggak ada style
   }),
+
+  whatsappButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor: "#25D366",
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
+    marginTop: 10,
+  },
+  
+  whatsappText: {
+    fontSize: 16,
+    fontWeight: "bold",
+    color: "#fff",
+    marginLeft: 10,
+  },
+  
 });

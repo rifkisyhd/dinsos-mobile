@@ -21,6 +21,16 @@ const PengaduanScreen = () => {
     Linking.openURL("https://play.google.com/store/apps/details?id=com.lapor");
   };
 
+  const openWhatsApp = () => {
+    const phoneNumber = "6281234567890"; // Ganti dengan nomor WhatsApp yang valid
+    const message = "Halo, saya ingin mengajukan pengaduan.";
+    const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
+      message
+    )}`;
+
+    Linking.openURL(url);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -45,6 +55,20 @@ const PengaduanScreen = () => {
             <Text style={styles.subtitle}>
               Demi Pelayanan Publik Yang Lebih Baik
             </Text>
+          </View>
+
+          {/* WhatsApp Section (New Feature) */}
+          <Text style={styles.sectionTitle}>AKSES WHATSAPP</Text>
+
+          <View style={styles.reportSection}>
+            {/* WhatsApp Button */}
+            <TouchableOpacity
+              style={styles.whatsappButton}
+              onPress={openWhatsApp}
+            >
+              <Ionicons name="logo-whatsapp" size={24} color="#fff" />
+              <Text style={styles.whatsappText}>Hubungi Kami via WhatsApp</Text>
+            </TouchableOpacity>
           </View>
 
           {/* Web Access Section */}

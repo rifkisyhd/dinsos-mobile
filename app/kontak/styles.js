@@ -10,8 +10,9 @@ export const styles = StyleSheet.create({
     // backgroundColor: '#0084ff',
     flexDirection: 'row',
     alignItems: 'center',
-    padding: 16,
-    paddingTop: Platform.OS === 'ios' ? 0 : 30,
+    paddingHorizontal: 16,
+    paddingVertical: Platform.OS === "ios" ? 20 : 25,
+
   },
   backButton: {
     marginRight: 10,
