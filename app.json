@@ -8,23 +8,15 @@
     "scheme": "myapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-
     "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "UIEdgeInsets": {
-          "top": "safeArea"
-        }
-      }
+      "supportsTablet": true
     },
     "android": {
-      "package": "com.dinsosjatim.gacor",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/logo_dinsos.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       }
     },
-
     "web": {
       "bundler": "metro",
       "output": "static",
@@ -35,7 +27,7 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/logo_dinsos.png",
+          "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
           "backgroundColor": "#ffffff"

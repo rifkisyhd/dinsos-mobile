@@ -1,5 +1,5 @@
 // styles/styles.js
-import { main } from "react-devtools";
+// import { main } from "react-devtools";
 import { StyleSheet, Platform } from "react-native";
 
 export const styles = StyleSheet.create({
@@ -16,14 +16,14 @@ export const styles = StyleSheet.create({
     color: "white",
     position: "absolute",
     zIndex: 1000,
-    top: Platform.OS === "ios" ? 30 : 0,
+    top: Platform.OS === "ios" ? 0 : 0,
     marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 20,
-    marginTop: Platform.select({ ios: 90, android: 70 }), 
+    marginTop: Platform.select({ ios: 70, android: 70 }), 
     position: "relative",
   },
   searchInput: {

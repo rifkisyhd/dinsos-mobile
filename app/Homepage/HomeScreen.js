@@ -42,12 +42,12 @@ export default function HomeScreen() {
         >
           <Text style={styles.headerText}>
             {new Date().getHours() < 12
-              ? "Selamat Pagi"
+              ? "Selamat Pagi Kawan Showsial"
               : new Date().getHours() < 15
-              ? "Selamat Siang"
+              ? "Selamat Siang Kawan Showsial"
               : new Date().getHours() < 18
-              ? "Selamat Sore"
-              : "Selamat Malam"}
+              ? "Selamat Sore Kawan Showsial"
+              : "Selamat Malam Kawan Showsial"}
           </Text>
   
           <ImageBackground

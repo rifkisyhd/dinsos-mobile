@@ -114,25 +114,32 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light"  backgroundColor="#3498db" />
+      <StatusBar style="light" backgroundColor="#3498db" />
+      
+         {/* Scrollable Content */}
+         <ScrollView
+        style={styles.scrollView}
+        showsVerticalScrollIndicator={true}
+        contentContainerStyle={styles.scrollViewContent}
+      >
 
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>UPT</Text>
       </View>
 
       {/* Dropdown dengan props */}
-      <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
+      <View style={styles.dropdownContainer}>
+        <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
+      </View>
 
-      {/* Scrollable Content */}
-      <ScrollView
-        style={styles.scrollView}
-        showsVerticalScrollIndicator={true}
-        contentContainerStyle={styles.scrollViewContent}
-      >
+   
         <View style={styles.gridContainer}>
           {filteredLocations.map((location) => (
             <TouchableOpacity key={location.id} style={styles.card}>
@@ -149,6 +156,7 @@ export default function App() {
           ))}
         </View>
       </ScrollView>
+      <View style={styles.homeIndicator} />
     </SafeAreaView>
   );
 }

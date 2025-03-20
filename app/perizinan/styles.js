@@ -1,4 +1,4 @@
-import { StyleSheet } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 
 export const styles = StyleSheet.create({
     container: {
@@ -61,4 +61,15 @@ export const styles = StyleSheet.create({
         height: 100,
         resizeMode: "contain",
       },
+      homeIndicator: Platform.select({
+        ios: {
+          position: "absolute",
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: 34,
+          backgroundColor: "#f5f5f5",
+        },
+        android: {}, // Di Android nggak ada style
+      }),
   });

@@ -3,34 +3,33 @@ import { StyleSheet, Platform } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#f5f5f5",
+    // backgroundColor: "#f5f5f5",
+    backgroundColor: "#33A9FF",
   },
 
   header: {
     backgroundColor: "#33A9FF",
-    paddingVertical: Platform.OS === "ios" ? 16 : 20,
+    paddingVertical: Platform.OS === "ios" ? 20 : 25,
     paddingHorizontal: 16,
     flexDirection: "row",
     alignItems: "center",
     zIndex: 10,
-    
   },
   backButton: {
     marginRight: 16,
-    marginTop: 10,
-    top : Platform.OS === "ios" ? 0 : 10,
+    top: Platform.OS === "ios" ? 0 : 10,
   },
   headerTitle: {
     color: "white",
     fontSize: 18,
     fontWeight: "bold",
-    marginTop: 10,
     top: Platform.OS === "ios" ? 0 : 10,
     // marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
   dropdownContainer: {
-    margin: 12,
+    padding: 5,
     position: "relative",
+    backgroundColor: "#fff",
   },
   dropdownButton: {
     flexDirection: "row",
@@ -44,6 +43,7 @@ export const styles = StyleSheet.create({
   },
   dropdownButtonText: {
     fontSize: 16,
+    marginLeft: 8,
     color: "#333",
   },
   dropdownList: {
@@ -82,6 +82,8 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    backgroundColor: "#f5f5f5",
+    height: "300%",
   },
   card: {
     width: "48%",
@@ -89,7 +91,7 @@ export const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 12,
     overflow: "hidden",
-},
+  },
   cardImage: {
     width: "100%",
     height: 100,
@@ -114,4 +116,15 @@ export const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  homeIndicator: Platform.select({
+    ios: {
+      position: "absolute",
+      bottom: 0,
+      left: 0,
+      right: 0,
+      height: 34,
+      backgroundColor: "#f5f5f5",
+    },
+    android: {}, // Di Android nggak ada style
+  }),
 });

@@ -29,6 +29,7 @@ export default function PerizinanScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
       
+      
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -51,6 +52,8 @@ export default function PerizinanScreen() {
           </TouchableOpacity>
         ))}
       </View>
+    <View style={styles.homeIndicator} />
     </SafeAreaView>
+
   );
 }

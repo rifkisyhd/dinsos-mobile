@@ -93,6 +93,7 @@ export default function ProgramScreen() {
           </View>
         </View>
       ))}
+        <View style={styles.homeIndicator} />
     </SafeAreaView>
   );
 }

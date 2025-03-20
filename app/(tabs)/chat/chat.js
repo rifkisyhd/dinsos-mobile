@@ -17,17 +17,24 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 import OpenAI from 'openai';
-import { OPENAI_API_KEY } from '../../config/openaiConfig';
+import Constants from 'expo-constants';
 
-// Inisialisasi OpenAI
+// Dapatkan API key dari berbagai sumber yang mungkin
+const apiKey =Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY ||
+              process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+
+// Debug log untuk membantu troubleshooting (akan muncul di console)
+console.log("OpenAI API Key tersedia:", apiKey ? "Ya" : "Tidak");
+
+// Inisialisasi OpenAI dengan API key
 const openai = new OpenAI({
-  apiKey: OPENAI_API_KEY
+  apiKey: apiKey
 });
 
 const ChatAI = () => {
   const router = useRouter();
   const [messages, setMessages] = useState([
-    { id: '1', text: 'Halo! Saya asisten AI Dinsos Mobile. Ada yang bisa saya bantu terkait layanan Dinas Sosial?', isUser: false }
+    { id: '1', text: 'Halo! Kawan Sosial. Ada yang bisa saya bantu?', isUser: false }
   ]);
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -58,6 +65,11 @@ const ChatAI = () => {
     setIsLoading(true);
     
     try {
+      // Verifikasi API key tersedia
+      if (!apiKey) {
+        throw new Error("API key tidak tersedia. Silakan periksa konfigurasi aplikasi.");
+      }
+      
       // Format pesan untuk OpenAI
       const formattedMessages = formatMessagesForOpenAI(updatedMessages);
       
@@ -121,9 +133,9 @@ const ChatAI = () => {
       {!item.isUser && (
         <View style={styles.avatarContainer}>
           <Image 
-            source={require('../../../assets/images/ChatGPT-Logo.png')} 
+            source={require('../../../assets/images/cakji.png')} 
             style={styles.avatar}
-            defaultSource={require('../../../assets/images/ChatGPT-Logo.png')}
+            defaultSource={require('../../../assets/images/cakji.png')}
           />
         </View>
       )}
@@ -146,7 +158,7 @@ const ChatAI = () => {
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </TouchableOpacity>
-        <Text style={styles.headerText}>Asisten Dinsos Mobile</Text>
+        <Text style={styles.headerText}>Tanya Cak J</Text>
       </View>
       
       <FlatList
