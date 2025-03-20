@@ -11,8 +11,9 @@ export const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
-    paddingTop: Platform.OS === 'ios' ? 20 : 30,
+    // paddingVertical: 16,
+    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    paddingBottom: Platform.OS === 'ios' ? 20 : 20,
   },
   backButton: {
     marginRight: 10,
