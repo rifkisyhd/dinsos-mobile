@@ -6,7 +6,7 @@ export default {
       slug: "dinsos-mobile",
       version: "1.0.0",
       orientation: "portrait",
-      icon: "./assets/images/icon.png",
+      icon: "./assets/images/logo_dinsos.png",
       scheme: "myapp",
       userInterfaceStyle: "automatic",
       newArchEnabled: true,
