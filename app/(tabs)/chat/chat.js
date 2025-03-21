@@ -75,7 +75,7 @@ const ChatAI = () => {
       
       // Panggil API OpenAI
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // Pilih model yang sesuai
+        model: "gpt-4o-mini", // Pilih model yang sesuai
         messages: [
           // Berikan konteks kepada AI
           {

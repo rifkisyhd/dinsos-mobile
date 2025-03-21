@@ -127,4 +127,10 @@ export const styles = StyleSheet.create({
     },
     android: {}, // Di Android nggak ada style
   }),
+  loadingContainer: {
+    display: "flex",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
 });

@@ -119,12 +119,6 @@ export default function HomeScreen() {
               imageSource={require("../../assets/images/popup.png")}
             />
           </View>
-  
-          <Button
-            title="Pergi ke Detail"
-            onPress={() => router.push("/detail")}
-            style={styles.buttonStyle}
-          />
 
           </View>
         </ScrollView>

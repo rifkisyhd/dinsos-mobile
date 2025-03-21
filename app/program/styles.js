@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
       alignItems: 'center',
       paddingHorizontal: 16,
       paddingVertical: 16,
-      marginTop: Platform.OS === 'ios' ? 0 : 16,
+      marginTop: Platform.OS === 'ios' ? 0 : 36,
     },
     backButton: {
       marginRight: 16, 

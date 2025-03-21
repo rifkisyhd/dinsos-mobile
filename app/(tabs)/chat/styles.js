@@ -12,7 +12,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
     paddingHorizontal: 16,
     // paddingVertical: 16,
-    paddingTop: Platform.OS === 'ios' ? 50 : 30,
+    paddingTop: Platform.OS === 'ios' ? 50 : 50,
     paddingBottom: Platform.OS === 'ios' ? 20 : 20,
   },
   backButton: {
