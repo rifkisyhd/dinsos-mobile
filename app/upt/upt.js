@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Text,
@@ -7,26 +7,20 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
+  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
+import { db } from "../../firebase"; // Sesuaikan path ke file firebase.js
+import { collection, getDocs, query, where } from "firebase/firestore";
 
-// Komponen Dropdown (Pakai Props)
-const Dropdown = ({ selectedUPT, setSelectedUPT }) => {
+// Komponen Dropdown dengan Data dari Firebase
+const Dropdown = ({ selectedUPT, setSelectedUPT, categories, loading }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  // List UPT
-  const items = [
-    { id: 1, name: "UPT Perlindungan dan Pelayanan Sosial Asuhan Anak" },
-    { id: 2, name: "UPT Pelayanan Sosial Tresna Werdha" },
-    { id: 3, name: "UPT Pelayanan Sosial Bina Remaja" },
-    { id: 4, name: "UPT Perlindungan dan Pelayanan Sosial Asuhan Balita" },
-    { id: 5, name: "UPT Peningkatan Tenaga Kesejahteraan Sosial" },
-  ];
-
   const handleSelectItem = (item) => {
-    setSelectedUPT(item.name);
+    setSelectedUPT(item);
     setIsOpen(false);
   };
 
@@ -35,9 +29,10 @@ const Dropdown = ({ selectedUPT, setSelectedUPT }) => {
       <TouchableOpacity
         style={styles.dropdownButton}
         onPress={() => setIsOpen(!isOpen)}
+        disabled={loading}
       >
         <Text style={styles.dropdownButtonText}>
-          {selectedUPT ? selectedUPT : "Pilih UPT"}
+          {selectedUPT ? selectedUPT.name : "Pilih UPT"}
         </Text>
         <Ionicons
           name={isOpen ? "chevron-up-outline" : "chevron-down-outline"}
@@ -47,7 +42,7 @@ const Dropdown = ({ selectedUPT, setSelectedUPT }) => {
       </TouchableOpacity>
       {isOpen && (
         <View style={styles.dropdownList}>
-          {items.map((item) => (
+          {categories.map((item) => (
             <TouchableOpacity
               key={item.id}
               style={styles.dropdownListItem}
@@ -67,94 +62,133 @@ export default function App() {
   const router = useRouter();
 
   const [selectedUPT, setSelectedUPT] = useState(null);
+  const [categories, setCategories] = useState([]);
+  const [locations, setLocations] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const locations = [
-    {
-      id: 1,
-      upt: "UPT Perlindungan dan Pelayanan Sosial Asuhan Anak",
-      name: "UPT Asuhan Anak Sumenep",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-    {
-      id: 2,
-      upt: "UPT Perlindungan dan Pelayanan Sosial Asuhan Anak",
-      name: "UPT Asuhan Anak Trenggalek",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-    {
-      id: 3,
-      upt: "UPT Pelayanan Sosial Tresna Werdha",
-      name: "UPT Tresna Werdha Surabaya",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-    {
-      id: 4,
-      upt: "UPT Pelayanan Sosial Tresna Werdha",
-      name: "UPT Tresna Werdha Malang",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-    {
-      id: 5,
-      upt: "UPT Pelayanan Sosial Bina Remaja",
-      name: "UPT Bina Remaja Jember",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-    {
-      id: 6,
-      upt: "UPT Pelayanan Sosial Bina Remaja",
-      name: "UPT Bina Remaja Kediri",
-      image: require("../../assets/images/lokasi1.png"),
-    },
-  ];
+  // Fetch UPT Categories from Firebase
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const categoriesCollection = collection(db, "upt_categories");
+        const categorySnapshot = await getDocs(categoriesCollection);
+        const categoryList = categorySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setCategories(categoryList);
+      } catch (error) {
+        console.error("Error fetching categories: ", error);
+      }
+    };
 
-  // Filter berdasarkan UPT yang dipilih
-  const filteredLocations = selectedUPT
-    ? locations.filter((loc) => loc.upt === selectedUPT)
-    : locations;
+    fetchCategories();
+  }, []);
+
+  // Fetch UPT Locations from Firebase
+  useEffect(() => {
+    const fetchLocations = async () => {
+      try {
+        setLoading(true);
+        let locationsQuery;
+        
+        if (selectedUPT) {
+          // Filter by selected UPT
+          locationsQuery = query(
+            collection(db, "upt_locations"), 
+            where("categoryId", "==", selectedUPT.id)
+          );
+        } else {
+          // Get all locations
+          locationsQuery = collection(db, "upt_locations");
+        }
+        
+        const locationSnapshot = await getDocs(locationsQuery);
+        const locationList = locationSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        
+        setLocations(locationList);
+      } catch (error) {
+        console.error("Error fetching locations: ", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLocations();
+  }, [selectedUPT]);
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" backgroundColor="#3498db" />
       
-         {/* Scrollable Content */}
-         <ScrollView
+      {/* Scrollable Content */}
+      <ScrollView
         style={styles.scrollView}
         showsVerticalScrollIndicator={true}
         contentContainerStyle={styles.scrollViewContent}
       >
-
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>UPT</Text>
-      </View>
-
-      {/* Dropdown dengan props */}
-      <View style={styles.dropdownContainer}>
-        <Dropdown selectedUPT={selectedUPT} setSelectedUPT={setSelectedUPT} />
-      </View>
-
-   
-        <View style={styles.gridContainer}>
-          {filteredLocations.map((location) => (
-            <TouchableOpacity key={location.id} style={styles.card}>
-              <Image source={location.image} style={styles.cardImage} />
-              <View style={styles.cardContent}>
-                <Text style={styles.cardText} numberOfLines={2}>
-                  {location.name}
-                </Text>
-                <TouchableOpacity style={styles.openIconContainer}>
-                  <Ionicons name="open-outline" size={18} color="white" />
-                </TouchableOpacity>
-              </View>
-            </TouchableOpacity>
-          ))}
+        {/* Header */}
+        <View style={styles.header}>
+          <TouchableOpacity
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <Ionicons name="arrow-back" size={24} color="white" />
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>UPT</Text>
         </View>
+
+        {/* Dropdown dengan props */}
+        <View style={styles.dropdownContainer}>
+          <Dropdown 
+            selectedUPT={selectedUPT} 
+            setSelectedUPT={setSelectedUPT} 
+            categories={categories}
+            loading={loading}
+          />
+        </View>
+
+        {loading ? (
+          <View style={styles.loadingContainer}>
+            <ActivityIndicator size="large" color="#3498db" />
+            <Text style={styles.loadingText}>Memuat data...</Text>
+          </View>
+        ) : (
+          <View style={styles.gridContainer}>
+            {locations.length > 0 ? (
+              locations.map((location) => (
+                <TouchableOpacity 
+                  key={location.id} 
+                  style={styles.card}
+                  onPress={() => router.push(`/upt-detail/${location.id}`)}
+                >
+                  <Image 
+                    source={{ uri: location.imageUrl }} 
+                    style={styles.cardImage}
+                    defaultSource={require("../../assets/images/lokasi1.png")}
+                  />
+                  <View style={styles.cardContent}>
+                    <Text style={styles.cardText} numberOfLines={2}>
+                      {location.name}
+                    </Text>
+                    <TouchableOpacity style={styles.openIconContainer}>
+                      <Ionicons name="open-outline" size={18} color="white" />
+                    </TouchableOpacity>
+                  </View>
+                </TouchableOpacity>
+              ))
+            ) : (
+              <View style={styles.emptyContainer}>
+                <Text style={styles.emptyText}>
+                  Tidak ada lokasi UPT yang tersedia.
+                </Text>
+              </View>
+            )}
+          </View>
+        )}
       </ScrollView>
       <View style={styles.homeIndicator} />
     </SafeAreaView>
