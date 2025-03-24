@@ -14,7 +14,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
 import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
-import MapView, { Marker } from "react-native-maps";
+// import MapView, { Marker } from "react-native-maps";
 import { styles } from "./styles";
 
 export default function UPTDetail() {

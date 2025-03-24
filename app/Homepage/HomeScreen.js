@@ -22,26 +22,27 @@ import { MenuItemsList, menuItems } from "./components/MenuItem";
 import { styles } from "./styles";
 // import WelcomeModal from "../welcome";
 import ImagePopup from "../components/ImagePopup";
+import ImageViewing from "react-native-image-viewing";
 
 export default function HomeScreen() {
   const router = useRouter();
 
-   // Bikin state terpisah buat masing-masing popup
-   const [modalVisibleAstacita, setModalVisibleAstacita] = useState(false);
-   const [modalVisibleNawa, setModalVisibleNawa] = useState(false);
+  // Bikin state terpisah buat masing-masing popup
+  const [modalVisibleAstacita, setModalVisibleAstacita] = useState(false);
+  const [modalVisibleNawa, setModalVisibleNawa] = useState(false);
 
   return (
     <View style={[styles.container, { flex: 1 }]}>
       <SafeAreaView style={{ flex: 1 }}>
         <StatusBar barStyle="light-content" backgroundColor="#3498db" />
-  
+
         <ScrollView
           style={{ flex: 1 }}
           contentContainerStyle={{ paddingBottom: 20 }}
           keyboardShouldPersistTaps="handled"
         >
           <Text style={styles.headerText}>
-            {new Date().getHours() < 12
+            {new Date().getHours() < 11
               ? "Selamat Pagi Kawan Showsial"
               : new Date().getHours() < 15
               ? "Selamat Siang Kawan Showsial"
@@ -49,12 +50,12 @@ export default function HomeScreen() {
               ? "Selamat Sore Kawan Showsial"
               : "Selamat Malam Kawan Showsial"}
           </Text>
-  
+
           <ImageBackground
             source={require("../../assets/images/homepage-atas.png")}
             style={styles.backgroundImage}
           >
-            <View style={styles.searchContainer}>
+            {/* <View style={styles.searchContainer}>
               <TextInput
                 placeholder="Cari ..."
                 placeholderTextColor="gray"
@@ -67,64 +68,72 @@ export default function HomeScreen() {
                 color="gray"
                 style={styles.searchIcon}
               />
-            </View>
-  
+            </View> */}
+
             <MenuItemsList />
           </ImageBackground>
-  
 
-  <View style={styles.main}>
-          {/* Astacita */}
-          <View>
-            <Text style={styles.menuText2}>Astacita Prabowo-Gibran</Text>
-            <TouchableOpacity onPress={() => setModalVisibleAstacita(true)}>
-              <Image
-                source={require("../../assets/images/asa-cita.png")}
-                style={{
-                  width: 370,
-                  height: 175,
-                  resizeMode: "contain",
-                  marginTop: 10,
-                  alignSelf: "center",
-                }}
-              />
-            </TouchableOpacity>
-  
-            <ImagePopup
-              visible={modalVisibleAstacita}
-              onClose={() => setModalVisibleAstacita(false)}
-              imageSource={require("../../assets/images/asacita.png")}
-            />
-          </View>
-  
-          {/* Nawa Bhakti Satya */}
-          <View>
-            <Text style={styles.menuText2}>Nawa Bhakti Satya</Text>
-            <TouchableOpacity onPress={() => setModalVisibleNawa(true)}>
-              <Image
-                source={require("../../assets/images/nawabakti.png")}
-                style={{
-                  width: 400,
-                  height: 255,
-                  resizeMode: "contain",
-                  marginTop: 10,
-                  alignSelf: "center",
-                }}
-              />
-            </TouchableOpacity>
-  
-            <ImagePopup
-              visible={modalVisibleNawa}
-              onClose={() => setModalVisibleNawa(false)}
-              imageSource={require("../../assets/images/popup.png")}
-            />
-          </View>
+          <View style={styles.main}>
+            {/* Astacita */}
+            <View>
+              <Text style={styles.menuText2}>Astacita Prabowo-Gibran</Text>
+              <TouchableOpacity onPress={() => setModalVisibleAstacita(true)}>
+                <Image
+                  source={require("../../assets/images/asa-cita.png")}
+                  style={{
+                    width: 370,
+                    height: 175,
+                    resizeMode: "contain",
+                    marginTop: 10,
+                    alignSelf: "center",
+                  }}
+                />
+              </TouchableOpacity>
 
+              <ImageViewing
+                visible={modalVisibleAstacita}
+                images={[
+                  {
+                    uri: Image.resolveAssetSource(
+                      require("../../assets/images/asacita.png")
+                    ).uri,
+                  },
+                ]}
+                onRequestClose={() => setModalVisibleAstacita(false)}
+              />
+            </View>
+
+            {/* Nawa Bhakti Satya */}
+            <View>
+              <Text style={styles.menuText2}>Nawa Bhakti Satya</Text>
+              <TouchableOpacity onPress={() => setModalVisibleNawa(true)}>
+                <Image
+                  source={require("../../assets/images/nawabakti.png")}
+                  style={{
+                    width: 400,
+                    height: 255,
+                    resizeMode: "contain",
+                    marginTop: 10,
+                    alignSelf: "center",
+                  }}
+                />
+              </TouchableOpacity>
+
+              <ImageViewing
+                visible={modalVisibleNawa}
+                images={[
+                  {
+                    uri: Image.resolveAssetSource(
+                      require("../../assets/images/popup.png")
+                    ).uri,
+                  },
+                ]}
+                onRequestClose={() => setModalVisibleNawa(false)}
+              />
+            </View>
           </View>
         </ScrollView>
       </SafeAreaView>
     </View>
   );
-  
 }
-  
