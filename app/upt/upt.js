@@ -176,7 +176,7 @@ export default function App() {
                 <TouchableOpacity
                   key={location.id}
                   style={styles.card}
-                  onPress={() => router.push(`/upt-detail/${location.id}`)}
+                  onPress={() => router.push(`../upt-detail/${location.id}`)}
                 >
                   <Image
                     source={{ uri: location.imageUrl }}

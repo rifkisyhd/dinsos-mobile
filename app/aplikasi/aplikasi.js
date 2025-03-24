@@ -18,11 +18,6 @@ export default function PerizinanScreen() {
         title: "E-JSC",
         image: require("../../assets/images/JSC.png"),
       },
-      {
-        id: 3,
-        title: "E-PSKS",
-        image: require("../../assets/images/Logo-e-PSKS.png"),
-      },
     ];
   
   return (

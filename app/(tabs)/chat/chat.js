@@ -155,10 +155,18 @@ const ChatAI = () => {
       <StatusBar style="light" />
       
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        {/* <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Tanya Cak J</Text>
+        </TouchableOpacity> */}
+        <View style={styles.avatarContainer}>
+          <Image 
+            source={require('../../../assets/images/cakji.png')} 
+            style={styles.avatar}
+            defaultSource={require('../../../assets/images/cakji.png')}
+          />
+        </View>
+
+        <Text style={styles.headerText}>Tanya JSC</Text>
       </View>
       
       <FlatList
