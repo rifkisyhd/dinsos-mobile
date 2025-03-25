@@ -75,7 +75,7 @@ const ChatAI = () => {
       
       // Panggil API OpenAI
       const response = await openai.chat.completions.create({
-        model: "gpt-4o", // Pilih model yang sesuai
+        model: "gpt-4o-mini", // Pilih model yang sesuai
         messages: [
           // Berikan konteks kepada AI
           {
@@ -155,10 +155,18 @@ const ChatAI = () => {
       <StatusBar style="light" />
       
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
+        {/* <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Tanya Cak J</Text>
+        </TouchableOpacity> */}
+        <View style={styles.avatarContainer}>
+          <Image 
+            source={require('../../../assets/images/cakji.png')} 
+            style={styles.avatar}
+            defaultSource={require('../../../assets/images/cakji.png')}
+          />
+        </View>
+
+        <Text style={styles.headerText}>Tanya JSC</Text>
       </View>
       
       <FlatList

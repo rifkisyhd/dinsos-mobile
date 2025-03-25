@@ -57,6 +57,7 @@ export const styles = StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 15,
     paddingHorizontal: 10,
+    marginTop: 70,
     borderRadius: 10,
     marginBottom: 20,
   },
@@ -97,5 +98,6 @@ export const styles = StyleSheet.create({
   main: {
     flex: 1,
     backgroundColor: "#eaeaea",
+    paddingBottom: 20,
   },
 });

@@ -17,27 +17,6 @@ export default function ProgramScreen() {
 
   const programData = [
     {
-      title: "Program Bidang",
-      programs: [
-        {
-          id: 1,
-          name: "E-RANTANG BASKOM",
-          icon: require("../../assets/images/e-rantang.png"),
-        },
-        {
-          id: 2,
-          name: "Sabi Bisa!",
-          icon: require("../../assets/images/sabi-bisa.png"),
-        },
-        {
-          id: 3,
-          name: "Jelita Manis",
-          icon: require("../../assets/images/jelita-manis.png"),
-        },
-      ],
-    },
-    {
-      title: "Program Inovasi",
       programs: [
         {
           id: 1,
@@ -74,7 +53,6 @@ export default function ProgramScreen() {
 
       {programData.map((section, index) => (
         <View key={index} style={styles.sectionContainer}>
-          <Text style={styles.sectionTitle}>{section.title}</Text>
           <View style={styles.programCard}>
             <View style={styles.programsContainer}>
               {section.programs.map((program) => (
