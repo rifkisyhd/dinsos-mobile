@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   StyleSheet,
   Linking,
+  StatusBar
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
@@ -16,6 +17,8 @@ import { db } from "../../firebase";
 import { doc, getDoc } from "firebase/firestore";
 // import MapView, { Marker } from "react-native-maps";
 import { styles } from "./styles";
+import LoadingScreen from "../components/LoadingScreen";
+
 
 export default function UPTDetail() {
   const router = useRouter();
@@ -77,7 +80,7 @@ export default function UPTDetail() {
   const handleOpenMaps = () => {
     if (location?.address) {
       const mapUrl = `https://maps.google.com/?q=${encodeURIComponent(
-        location.address
+        location.name
       )}`;
       Linking.openURL(mapUrl);
     }
@@ -85,15 +88,14 @@ export default function UPTDetail() {
 
   if (loading) {
     return (
-      <SafeAreaView style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#3498db" />
-        <Text style={styles.loadingText}>Memuat data...</Text>
-      </SafeAreaView>
+        <LoadingScreen />
     );
   }
 
   return (
     <ScrollView>
+        <StatusBar barStyle="dark-content" backgroundColor="#3498db" />
+
       <SafeAreaView style={styles.container}>
         {/* Header Image */}
         <View style={styles.imageContainer}>
