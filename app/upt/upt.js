@@ -13,7 +13,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
-import { db } from "../../firebase"; // Sesuaikan path ke file firebase.js
+import { db } from "../../firebase"; 
 import { collection, getDocs, query, where } from "firebase/firestore";
 import LoadingScreen from "../components/LoadingScreen";
 import Dropdown from "./components/Dropdown";

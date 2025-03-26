@@ -5,8 +5,10 @@ import {
   TextInput, 
   TouchableOpacity, 
   FlatList, 
+  Keyboard,
   StyleSheet, 
   ActivityIndicator,
+  TouchableWithoutFeedback,
   KeyboardAvoidingView,
   Platform,
   Image,
@@ -123,6 +125,10 @@ const ChatAI = () => {
     }
   }, [messages]);
 
+  const dismissKeyboard = () => {
+    Keyboard.dismiss();
+  };
+
   // Render message bubbles
   const renderItem = ({ item }) => (
     <View style={[
@@ -151,6 +157,7 @@ const ChatAI = () => {
   );
 
   return (
+    <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
     <View style={styles.container}>
       <StatusBar style="light" />
       
@@ -180,7 +187,7 @@ const ChatAI = () => {
       
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
         style={styles.inputWrapper}
       >
         <View style={styles.inputContainer}>
@@ -206,6 +213,7 @@ const ChatAI = () => {
         </View>
       </KeyboardAvoidingView>
     </View>
+    </TouchableWithoutFeedback>
   );
 };
 

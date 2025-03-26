@@ -91,11 +91,12 @@ export default function HomeScreen() {
               </TouchableOpacity>
 
               <ImageViewing
+                key={modalVisibleAstacita ? "open" : "closed"} // Reset modal saat berubah
                 visible={modalVisibleAstacita}
                 images={[
                   {
                     uri: Image.resolveAssetSource(
-                      require("../../assets/images/asacita.png")
+                      require("../../assets/images/popup.png")
                     ).uri,
                   },
                 ]}
@@ -120,6 +121,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
 
               <ImageViewing
+                key={modalVisibleNawa ? "open" : "closed"} // Reset modal saat berubah
                 visible={modalVisibleNawa}
                 images={[
                   {
