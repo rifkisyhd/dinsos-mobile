@@ -22,8 +22,8 @@ const ContactScreen = () => {
       id: 1, 
       type: 'phone', 
       icon: <Ionicons name="call" size={24} color="white" />, 
-      text: '031-8290794', 
-      onPress: () => Linking.openURL('tel:0318290794') 
+      text: '0852-8066-3377', 
+      onPress: () => Linking.openURL('tel:085280663377') 
     },
     { 
       id: 2, 
@@ -45,6 +45,13 @@ const ContactScreen = () => {
       icon: <FontAwesome name="instagram" size={24} color="white" />, 
       text: '@dinsosjatim', 
       onPress: () => Linking.openURL('https://instagram.com/dinsosjatim') 
+    },
+    { 
+      id: 5, 
+      type: 'WhatsApp', 
+      icon: <FontAwesome name="whatsapp" size={24} color="white" />, 
+      text: '085280663377', 
+      onPress: () => Linking.openURL('https://wa.me/6285280663377') 
     },
   ];
 

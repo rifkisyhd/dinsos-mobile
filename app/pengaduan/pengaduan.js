@@ -22,7 +22,7 @@ const PengaduanScreen = () => {
   };
 
   const openWhatsApp = () => {
-    const phoneNumber = "6281234567890"; // Ganti dengan nomor WhatsApp yang valid
+    const phoneNumber = "6285280663377"; // Ganti dengan nomor WhatsApp yang valid
     const message = "Halo, saya ingin mengajukan pengaduan.";
     const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(
       message

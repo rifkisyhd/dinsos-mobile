@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "../styles"; // Sesuaikan path kalau beda folder
-import LoadingScreen from "../../components/LoadingScreen"; // Sesuaikan path kalau beda folder
+import { styles } from "../styles"; 
+import LoadingScreen from "../../components/LoadingScreen"; 
 
 const Dropdown = ({ selectedUPT, setSelectedUPT, categories, loadingCategories }) => {
   const [isOpen, setIsOpen] = useState(false);

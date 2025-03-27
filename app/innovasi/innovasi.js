@@ -62,7 +62,7 @@ const innovationItems = [
 const InnovationScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#e6f0f5" />
+      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
 
       {/* Header */}
       <View style={styles.header}>

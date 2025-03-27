@@ -33,8 +33,17 @@ export default function HomeScreen() {
 
   return (
     <View style={[styles.container, { flex: 1 }]}>
+      <ImageBackground
+        source={require("../../assets/images/homepage-atas.png")}
+        style={styles.backgroundImage}
+      ></ImageBackground>
+
       <SafeAreaView style={{ flex: 1 }}>
-        <StatusBar barStyle="light-content" backgroundColor="#3498db" />
+        <StatusBar
+          barStyle="light-content"
+          translucent
+          backgroundColor="transparent"
+        />
 
         <ScrollView
           style={{ flex: 1 }}
@@ -51,11 +60,7 @@ export default function HomeScreen() {
               : "Selamat Malam Kawan Showsial"}
           </Text>
 
-          <ImageBackground
-            source={require("../../assets/images/homepage-atas.png")}
-            style={styles.backgroundImage}
-          >
-            {/* <View style={styles.searchContainer}>
+          {/* <View style={styles.searchContainer}>
               <TextInput
                 placeholder="Cari ..."
                 placeholderTextColor="gray"
@@ -70,8 +75,7 @@ export default function HomeScreen() {
               />
             </View> */}
 
-            <MenuItemsList />
-          </ImageBackground>
+          <MenuItemsList />
 
           <View style={styles.main}>
             {/* Astacita */}
@@ -91,11 +95,12 @@ export default function HomeScreen() {
               </TouchableOpacity>
 
               <ImageViewing
+                key={modalVisibleAstacita ? "open" : "closed"} // Reset modal saat berubah
                 visible={modalVisibleAstacita}
                 images={[
                   {
                     uri: Image.resolveAssetSource(
-                      require("../../assets/images/asacita.png")
+                      require("../../assets/images/popup.png")
                     ).uri,
                   },
                 ]}
@@ -120,6 +125,7 @@ export default function HomeScreen() {
               </TouchableOpacity>
 
               <ImageViewing
+                key={modalVisibleNawa ? "open" : "closed"} // Reset modal saat berubah
                 visible={modalVisibleNawa}
                 images={[
                   {
