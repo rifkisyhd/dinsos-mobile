@@ -6,6 +6,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
+  StatusBar,
 } from "react-native";
 import { styles } from "./styles";
 
@@ -32,6 +33,9 @@ const ProfilDinsosScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
+
+<StatusBar backgroundColor= "transparent" translucent barStyle="light-content" />
+
       {/* Header */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Profil Dinsos</Text>

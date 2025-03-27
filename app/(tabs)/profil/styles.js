@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
@@ -6,12 +6,25 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f8f9fa',
   },
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
     backgroundColor: '#0066cc',
+    paddingTop: StatusBar.currentHeight + 50,
+    paddingBottom: 20,  
     alignItems: 'center',
-    elevation: 4,
-  paddingVertical: Platform.OS === 'ios' ? 20 : 45,
-    paddingBottom: Platform.OS === 'ios' ? 20 : 25,
+    justifyContent: 'center',
+    height: 105,
+    zIndex: 1000,
   },
+  // header: {
+  //   backgroundColor: '#0066cc',
+  //   alignItems: 'center',
+  //   elevation: 4,
+  // paddingVertical: Platform.OS === 'ios' ? 20 : 45,
+  //   paddingBottom: Platform.OS === 'ios' ? 20 : 25,
+  // },
   headerTitle: {
     color: '#ffffff',
     fontSize: 18,

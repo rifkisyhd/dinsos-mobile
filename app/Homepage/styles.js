@@ -5,8 +5,8 @@ import { StyleSheet, Platform } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#33A9FF",
-    // backgroundColor: "#eaeaea",
+    // backgroundColor: "#33A9FF",
+    backgroundColor: "#eaeaea",
   },
 
   headerText: {
@@ -19,6 +19,12 @@ export const styles = StyleSheet.create({
     top: Platform.OS === "ios" ? 0 : 0,
     marginHorizontal: Platform.OS === "ios" ? 15 : 20,
   },
+  backgroundImage: {
+...StyleSheet.absoluteFillObject,
+width: "100%",
+height: 300,
+  },
+  
   searchContainer: {
     flexDirection: "row",
     alignItems: "center",
@@ -39,17 +45,17 @@ export const styles = StyleSheet.create({
     right: 20,
     top: 3,
   },
-   // 🔥 Update menuContainer buat horizontal scrolling
+
    menuContainer: {
     flexDirection: "row",
     paddingVertical: 15,
     paddingHorizontal: 10,
   },
 
-  // 🔥 Update menuItem supaya tetap terpisah rapi
+
   menuItem: {
     alignItems: "center",
-    width: 80, // Sesuaikan supaya item nggak terlalu lebar
+    width: 80, 
     marginRight: 15, // Kasih jarak antar item
   },
 
