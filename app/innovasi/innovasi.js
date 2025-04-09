@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
@@ -8,58 +8,74 @@ import {
   SafeAreaView,
   ScrollView,
   Linking,
+  ActivityIndicator,
+  Alert
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import { router } from "expo-router";
 
-const innovationItems = [
-  {
-    id: 1,
-    title: "Janeta MU",
-    icon: require("../../assets/images/logo-janeta.png"),
-  },
-  {
-    id: 2,
-    title: "Si Jelita Manis",
-    icon: require("../../assets/images/logo-jelita.png"),
-    onclick: () => Linking.openURL("https://taplink.cc/sijelitamanis"),
-  },
-  {
-    id: 3,
-    title: "BOMBASTIS",
-    icon: require("../../assets/images/e-PSKS.png"),
-  },
-  {
-    id: 4,
-    title: "Sabi Bisa!",
-    icon: require("../../assets/images/sabi-bisa.png"),
-    onclick: () =>
-      Linking.openURL("https://sites.google.com/view/sabibisagallery"),
-  },
-  {
-    id: 5,
-    title: "Niat Tangkas",
-    icon: require("../../assets/images/logo-tangkas.png"),
-  },
-  {
-    id: 6,
-    title: "Tuli Mengaji",
-    icon: require("../../assets/images/logo-mengaji.png"),
-  },
-  {
-    id: 7,
-    title: "LADANGKU",
-    icon: require("../../assets/images/logo-mengaji.png"),
-  },
-  {
-    id: 8,
-    title: "GADISKU",
-    icon: require("../../assets/images/logo-gadisku.png"),
-  },
-];
+import { db } from '../../firebase';
+import { collection, getDocs } from 'firebase/firestore';
 
 const InnovationScreen = () => {
+  const [innovationItems, setInnovationItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchInnovationItems = async () => {
+      try {
+        setLoading(true);
+        const querySnapshot = await getDocs(collection(db, "tb_inovasi"));
+        
+        if (querySnapshot.empty) {
+          setError("Tidak ada data inovasi ditemukan");
+        } else {
+          const items = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data()
+          }));
+          
+          console.log("Fetched Inovasi Items:", items);
+          
+          setInnovationItems(items);
+        }
+      } catch (error) {
+        console.error("Error fetching inovasi items: ", error);
+        
+        setError(`Gagal mengambil data: ${error.message}`);
+        
+        Alert.alert(
+          "Error Pengambilan Data", 
+          `Tidak dapat mengambil data inovasi: ${error.message}`
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInnovationItems();
+  }, []);
+
+  // Render loading
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#33A9FF" />
+      </SafeAreaView>
+    );
+  }
+
+  // Render error
+  if (error) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <Text style={{color: 'red', textAlign: 'center'}}>{error}</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
@@ -78,31 +94,40 @@ const InnovationScreen = () => {
       {/* Content */}
       <ScrollView style={styles.scrollView}>
         <View style={styles.gridContainer}>
-          {innovationItems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              onPress={() => item.onclick?.()}
-            >
-              <View style={styles.cardContent}>
-                <View style={styles.iconContainer}>
-                  <Image source={item.icon} style={styles.icon} />
+          {innovationItems.length === 0 ? (
+            <Text style={{textAlign: 'center', marginTop: 20}}>
+              Tidak ada data inovasi
+            </Text>
+          ) : (
+            innovationItems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() => item.onclick && Linking.openURL(item.onclick)}
+              >
+                <View style={styles.cardContent}>
+                  <View style={styles.iconContainer}>
+                    <Image 
+                      source={{ uri: item.icon }} 
+                      style={styles.icon} 
+                      onError={(e) => console.log('Image load error:', e.nativeEvent.error)}
+                    />
+                  </View>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
                 </View>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-              </View>
 
-
-              {/* icon */}
-              {item.onclick && (
-                <TouchableOpacity
-                  style={styles.menuButton}
-                  onPress={() => item.onclick?.()}
-                >
-                  <Ionicons name="open-outline" size={20} color="white" />
-                </TouchableOpacity>
-              )}
-            </TouchableOpacity>
-          ))}
+                {/* icon */}
+                {item.onclick && (
+                  <TouchableOpacity
+                    style={styles.menuButton}
+                    onPress={() => Linking.openURL(item.onclick)}
+                  >
+                    <Ionicons name="open-outline" size={20} color="white" />
+                  </TouchableOpacity>
+                )}
+              </TouchableOpacity>
+            ))
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
