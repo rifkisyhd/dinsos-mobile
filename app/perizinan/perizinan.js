@@ -16,9 +16,41 @@ import { useRouter } from "expo-router";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../firebase";
 import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from "../../firebase";
+import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
 
 export default function PerizinanScreen() {
   const router = useRouter();
+  const [perizinanItems, setPerizinanItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPerizinanItems = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
+        const items = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPerizinanItems(items);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching perizinan items: ", error);
+        setLoading(false);
+      }
+    };
+
+    fetchPerizinanItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#33A9FF" />
+      </SafeAreaView>
+    );
+  }
   const [perizinanItems, setPerizinanItems] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -52,7 +84,6 @@ export default function PerizinanScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
-
  {/* Header */}
  <View style={styles.header}>
           <TouchableOpacity
@@ -63,7 +94,7 @@ export default function PerizinanScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Perizinan</Text>
         </View>
-
+        
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
@@ -72,81 +103,20 @@ export default function PerizinanScreen() {
 
         {/* Content */}
         <View style={styles.content}>
-          {/* Card 1 */}
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>Surat Pengumpulan</Text>
-                <Text style={styles.cardSubtitle}>Uang atau Barang</Text>
+          {perizinanItems.map((item) => (
+            <TouchableOpacity key={item.id} style={styles.card}>
+              <View style={styles.cardContent}>
+                <View style={styles.cardTextContainer}>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
+                  <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+                </View>
+                <Image
+                  source={{ uri: item.imageUrl }}
+                  style={styles.cardImage}
+                />
               </View>
-              <Image
-                source={require("../../assets/images/surat-pengumpulan-uang.png")}
-                style={styles.cardImage}
-              />
-            </View>
-          </TouchableOpacity>
-
-          {/* Card 2 */}
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>Rekomendasi</Text>
-                <Text style={styles.cardSubtitle}>Undian Gratis Berhadiah</Text>
-              </View>
-              <Image
-                source={require("../../assets/images/rekomendasi-pengumpulan-uang.png")}
-                style={styles.cardImage}
-              />
-            </View>
-          </TouchableOpacity>
-
-          {/* Card 3 */}
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>Surat Rekomendasi</Text>
-                <Text style={styles.cardSubtitle}>
-                  Pengumpulan Uang Atau Barang
-                </Text>
-              </View>
-              <Image
-                source={require("../../assets/images/surat-pendaftaran.png")}
-                style={styles.cardImage}
-              />
-            </View>
-          </TouchableOpacity>
-
-          {/* Card 4 */}
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>STP</Text>
-                <Text style={styles.cardSubtitle}>
-                  Surat Tanda Pendaftaran
-                </Text>
-              </View>
-              <Image
-                source={require("../../assets/images/surat-pendaftaran.png")}
-                style={styles.cardImage}
-              />
-            </View>
-          </TouchableOpacity>
-          
-          {/* Card 5 */}
-          <TouchableOpacity style={styles.card}>
-            <View style={styles.cardContent}>
-              <View style={styles.cardTextContainer}>
-                <Text style={styles.cardTitle}>STPU</Text>
-                <Text style={styles.cardSubtitle}>
-                Surat Tanda Pendaftaran Ulang
-                </Text>
-              </View>
-              <Image
-                source={require("../../assets/images/surat-pendaftaran.png")}
-                style={styles.cardImage}
-              />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          ))}
         </View>
       </ScrollView>
       <View style={styles.homeIndicator} />
