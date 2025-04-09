@@ -12,7 +12,8 @@ import {
   KeyboardAvoidingView,
   Platform,
   Image,
-  Alert
+  Alert,
+  ScrollView
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -21,17 +22,11 @@ import { styles } from './styles';
 import OpenAI from 'openai';
 import Constants from 'expo-constants';
 
-// Dapatkan API key dari berbagai sumber yang mungkin
-const apiKey =Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY ||
-              process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+const apiKey = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
-// Debug log untuk membantu troubleshooting (akan muncul di console)
 console.log("OpenAI API Key tersedia:", apiKey ? "Ya" : "Tidak");
 
-// Inisialisasi OpenAI dengan API key
-const openai = new OpenAI({
-  apiKey: apiKey
-});
+const openai = new OpenAI({ apiKey });
 
 const ChatAI = () => {
   const router = useRouter();
@@ -42,7 +37,6 @@ const ChatAI = () => {
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef(null);
 
-  // Format pesan untuk API OpenAI
   const formatMessagesForOpenAI = (messages) => {
     return messages.map(msg => ({
       role: msg.isUser ? 'user' : 'assistant',
@@ -50,36 +44,32 @@ const ChatAI = () => {
     }));
   };
 
-  // Function untuk memanggil API OpenAI
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
-    
-    // Tambahkan pesan pengguna ke riwayat chat
+
     const userMessage = {
       id: Date.now().toString(),
       text: inputText,
       isUser: true,
     };
-    
+
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
     setInputText('');
     setIsLoading(true);
-    
+
+    flatListRef.current?.scrollToEnd({ animated: true });
+
     try {
-      // Verifikasi API key tersedia
       if (!apiKey) {
         throw new Error("API key tidak tersedia. Silakan periksa konfigurasi aplikasi.");
       }
-      
-      // Format pesan untuk OpenAI
+
       const formattedMessages = formatMessagesForOpenAI(updatedMessages);
-      
-      // Panggil API OpenAI
+
       const response = await openai.chat.completions.create({
-        model: "gpt-4o-mini", // Pilih model yang sesuai
+        model: "gpt-4o-mini",
         messages: [
-          // Berikan konteks kepada AI
           {
             role: "system",
             content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. Berikan informasi yang akurat dan ramah tentang program bantuan sosial, persyaratan, dan prosedur pelayanan. Jika ditanya tentang hal di luar konteks Dinas Sosial, minta pengguna untuk mengajukan pertanyaan yang relevan dengan layanan Dinas Sosial."
@@ -88,28 +78,29 @@ const ChatAI = () => {
         ],
         temperature: 0.7,
       });
-      
-      // Tambahkan respons AI ke riwayat chat
+
       const botResponse = {
         id: Date.now().toString() + '-bot',
         text: response.choices[0].message.content,
         isUser: false,
       };
-      
-      setMessages(prevMessages => [...prevMessages, botResponse]);
+
+      setMessages(prevMessages => {
+        const updated = [...prevMessages, botResponse];
+        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+        return updated;
+      });
     } catch (error) {
       console.error('Error:', error);
-      // Tambahkan pesan error
       const errorMessage = {
         id: Date.now().toString() + '-error',
         text: 'Maaf, terjadi kesalahan saat menghubungi server. Silakan coba lagi nanti.',
         isUser: false,
         isError: true,
       };
-      
+
       setMessages(prevMessages => [...prevMessages, errorMessage]);
-      
-      // Tampilkan alert dengan informasi error untuk debugging
+
       if (__DEV__) {
         Alert.alert('Error', error.message || 'Unknown error occurred');
       }
@@ -118,28 +109,20 @@ const ChatAI = () => {
     }
   };
 
-  // Auto scroll ke bawah saat ada pesan baru
-  useEffect(() => {
-    if (flatListRef.current) {
-      flatListRef.current.scrollToEnd({ animated: true });
-    }
-  }, [messages]);
-
   const dismissKeyboard = () => {
     Keyboard.dismiss();
   };
 
-  // Render message bubbles
   const renderItem = ({ item }) => (
     <View style={[
-      styles.messageBubble, 
+      styles.messageBubble,
       item.isUser ? styles.userBubble : styles.botBubble,
       item.isError && styles.errorBubble
     ]}>
       {!item.isUser && (
         <View style={styles.avatarContainer}>
-          <Image 
-            source={require('../../../assets/images/cakji.png')} 
+          <Image
+            source={require('../../../assets/images/cakji.png')}
             style={styles.avatar}
             defaultSource={require('../../../assets/images/cakji.png')}
           />
@@ -158,61 +141,60 @@ const ChatAI = () => {
 
   return (
     <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
-    <View style={styles.container}>
-      <StatusBar style="light" />
-      
-      <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity> */}
-        <View style={styles.avatarContainer}>
-          <Image 
-            source={require('../../../assets/images/cakji.png')} 
-            style={styles.avatar}
-            defaultSource={require('../../../assets/images/cakji.png')}
-          />
+      <View style={styles.container}>
+        <StatusBar style="light" />
+
+        <View style={styles.header}>
+          <View style={styles.avatarContainer}>
+            <Image
+              source={require('../../../assets/images/cakji.png')}
+              style={styles.avatar}
+              defaultSource={require('../../../assets/images/cakji.png')}
+            />
+          </View>
+          <Text style={styles.headerText}>Tanya JSC</Text>
         </View>
 
-        <Text style={styles.headerText}>Tanya JSC</Text>
+        <FlatList
+          ref={flatListRef}
+          data={messages}
+          renderItem={renderItem}
+          keyExtractor={item => item.id}
+          style={styles.messageList}
+          contentContainerStyle={styles.messageListContent}
+          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          keyboardShouldPersistTaps="handled"
+        />
+
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
+          style={styles.inputWrapper}
+        >
+          <View style={styles.inputContainer}>
+            <TextInput
+              style={styles.input}
+              value={inputText}
+              onChangeText={setInputText}
+              placeholder="Ketik pesan..."
+              placeholderTextColor="#999"
+              multiline
+              maxHeight={100}
+            />
+            {isLoading ? (
+              <ActivityIndicator size="small" color="#0084ff" style={styles.sendButton} />
+            ) : (
+              <TouchableOpacity
+                style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
+                onPress={sendMessage}
+                disabled={inputText.trim() === ''}
+              >
+                <Ionicons name="send" size={20} color="white" />
+              </TouchableOpacity>
+            )}
+          </View>
+        </KeyboardAvoidingView>
       </View>
-      
-      <FlatList
-        ref={flatListRef}
-        data={messages}
-        renderItem={renderItem}
-        keyExtractor={item => item.id}
-        style={styles.messageList}
-        contentContainerStyle={styles.messageListContent}
-      />
-      
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
-        style={styles.inputWrapper}
-      >
-        <View style={styles.inputContainer}>
-          <TextInput
-            style={styles.input}
-            value={inputText}
-            onChangeText={setInputText}
-            placeholder="Ketik pesan..."
-            placeholderTextColor="#999"
-            multiline
-          />
-          {isLoading ? (
-            <ActivityIndicator size="small" color="#0084ff" style={styles.sendButton} />
-          ) : (
-            <TouchableOpacity 
-              style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]} 
-              onPress={sendMessage}
-              disabled={inputText.trim() === ''}
-            >
-              <Ionicons name="send" size={20} color="white" />
-            </TouchableOpacity>
-          )}
-        </View>
-      </KeyboardAvoidingView>
-    </View>
     </TouchableWithoutFeedback>
   );
 };

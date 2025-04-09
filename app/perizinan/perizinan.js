@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
 import {
   StyleSheet,
   View,
@@ -8,13 +8,46 @@ import {
   SafeAreaView,
   StatusBar,
   ScrollView,
-} from "react-native";
+  ActivityIndicator
+} from 'react-native';
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from "../../firebase";
+import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
 
 export default function PerizinanScreen() {
   const router = useRouter();
+  const [perizinanItems, setPerizinanItems] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchPerizinanItems = async () => {
+      try {
+        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
+        const items = querySnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+        setPerizinanItems(items);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching perizinan items: ", error);
+        setLoading(false);
+      }
+    };
+
+    fetchPerizinanItems();
+  }, []);
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <ActivityIndicator size="large" color="#33A9FF" />
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
