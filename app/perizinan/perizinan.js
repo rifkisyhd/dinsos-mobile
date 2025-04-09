@@ -20,13 +20,8 @@ export default function PerizinanScreen() {
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
 
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        {/* Header */}
-        <View style={styles.header}>
+ {/* Header */}
+ <View style={styles.header}>
           <TouchableOpacity
             style={styles.backButton}
             onPress={() => router.back()}
@@ -35,6 +30,12 @@ export default function PerizinanScreen() {
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Perizinan</Text>
         </View>
+
+      <ScrollView
+        style={{ flex: 1 }}
+        contentContainerStyle={{ paddingBottom: 20 }}
+        keyboardShouldPersistTaps="handled"
+      >
 
         {/* Content */}
         <View style={styles.content}>
@@ -73,6 +74,38 @@ export default function PerizinanScreen() {
                 <Text style={styles.cardTitle}>Surat Rekomendasi</Text>
                 <Text style={styles.cardSubtitle}>
                   Pengumpulan Uang Atau Barang
+                </Text>
+              </View>
+              <Image
+                source={require("../../assets/images/surat-pendaftaran.png")}
+                style={styles.cardImage}
+              />
+            </View>
+          </TouchableOpacity>
+
+          {/* Card 4 */}
+          <TouchableOpacity style={styles.card}>
+            <View style={styles.cardContent}>
+              <View style={styles.cardTextContainer}>
+                <Text style={styles.cardTitle}>STP</Text>
+                <Text style={styles.cardSubtitle}>
+                  Surat Tanda Pendaftaran
+                </Text>
+              </View>
+              <Image
+                source={require("../../assets/images/surat-pendaftaran.png")}
+                style={styles.cardImage}
+              />
+            </View>
+          </TouchableOpacity>
+          
+          {/* Card 5 */}
+          <TouchableOpacity style={styles.card}>
+            <View style={styles.cardContent}>
+              <View style={styles.cardTextContainer}>
+                <Text style={styles.cardTitle}>STPU</Text>
+                <Text style={styles.cardSubtitle}>
+                Surat Tanda Pendaftaran Ulang
                 </Text>
               </View>
               <Image

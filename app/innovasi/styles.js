@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions, StatusBar } from 'react-native';
+import { StyleSheet, Dimensions, StatusBar, Platform } from 'react-native';
 
 const { width } = Dimensions.get('window');
 const cardWidth = (width - 40) / 2; // Two cards per row with spacing
@@ -11,10 +11,11 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 0,
+    top:0,
     left: 0,
     right: 0,
-    paddingTop: StatusBar.currentHeight + 50,
+    // paddingTop: StatusBar.currentHeight + 50,
+     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 60,
     zIndex: 100,
     height: 100,
     flexDirection: 'row',
@@ -38,6 +39,7 @@ const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginTop: Platform.OS === 'ios' ? 0 : 20,
   },
   gridContainer: {
     flexDirection: 'row',

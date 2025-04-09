@@ -11,11 +11,13 @@ export const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#0066cc',
-    paddingTop: StatusBar.currentHeight + 50,
+    // paddingTop: StatusBar.currentHeight + 50,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 50,
+    
     paddingBottom: 20,  
     alignItems: 'center',
     justifyContent: 'center',
-    height: 105,
+    height: 100,
     zIndex: 1000,
   },
   // header: {
@@ -32,6 +34,7 @@ export const styles = StyleSheet.create({
   },
   scrollView: {
     flex: 1,
+    marginTop: 50,
   },
   card: {
     margin: 16,
