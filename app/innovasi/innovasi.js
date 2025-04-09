@@ -5,7 +5,7 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
-  SafeAreaView,
+  // SafeAreaView,
   ScrollView,
   Alert,
   Linking,
