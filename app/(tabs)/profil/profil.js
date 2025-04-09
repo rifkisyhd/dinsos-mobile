@@ -4,11 +4,12 @@ import {
   Text,
   Image,
   TouchableOpacity,
-  SafeAreaView,
+  // SafeAreaView,
   ScrollView,
   StatusBar,
 } from "react-native";
 import { styles } from "./styles";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const ProfilDinsosScreen = () => {
   // State to track which sections are expanded
@@ -48,7 +49,7 @@ const ProfilDinsosScreen = () => {
           <View style={styles.logoContainer}>
             <Image
               source={require("../../../assets/images/poster-profil.png")}
-              style={styles.logo}
+              style={styles.logo} 
               resizeMode="contain"
             />
           </View>

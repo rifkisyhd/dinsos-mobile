@@ -5,13 +5,14 @@ import {
   TouchableOpacity,
   Image,
   StatusBar,
-  SafeAreaView,
+  // SafeAreaView,
   ScrollView,
   Linking,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import styles from "./styles";
 import { router } from "expo-router";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const innovationItems = [
   {

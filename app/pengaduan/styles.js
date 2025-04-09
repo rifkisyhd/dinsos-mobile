@@ -1,4 +1,4 @@
-import { StyleSheet, Dimensions, Platform } from "react-native";
+import { StyleSheet, Dimensions, Platform, StatusBar } from "react-native";
 
 const { width, height } = Dimensions.get("window");
 
@@ -8,6 +8,7 @@ export const styles = StyleSheet.create({
     backgroundColor: "#5b8ba6",
   },
   header: {
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 10,
     flexDirection: "row",
     alignItems: "center",
     padding: 15,
