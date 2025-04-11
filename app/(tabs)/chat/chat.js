@@ -1,19 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { 
-  View, 
-  Text, 
-  TextInput, 
-  TouchableOpacity, 
-  FlatList, 
-  Keyboard,
-  StyleSheet, 
-  ActivityIndicator,
-  TouchableWithoutFeedback,
-  KeyboardAvoidingView,
-  Platform,
-  Image,
-  Alert,
-  ScrollView
+import React, { useState, useRef } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity, FlatList,
+  Keyboard, StyleSheet, ActivityIndicator, TouchableWithoutFeedback,
+  KeyboardAvoidingView, Platform, Image, Alert
 } from 'react-native';
 import { StatusBar } from 'expo-status-bar';
 import { useRouter } from 'expo-router';
@@ -22,9 +11,9 @@ import { styles } from './styles';
 import OpenAI from 'openai';
 import Constants from 'expo-constants';
 
-const apiKey = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+import { supabase } from '../../../lib/supabaseClient';
 
-console.log("OpenAI API Key tersedia:", apiKey ? "Ya" : "Tidak");
+const apiKey = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
 const openai = new OpenAI({ apiKey });
 
@@ -44,6 +33,18 @@ const ChatAI = () => {
     }));
   };
 
+  const saveMessageToSupabase = async (msg) => {
+    const { error } = await supabase.from('chats').insert({
+      message: msg.text,
+      is_user: msg.isUser,
+      created_at: new Date().toISOString()
+    });
+
+    if (error) {
+      console.error('Gagal menyimpan chat:', error.message);
+    }
+  };
+
   const sendMessage = async () => {
     if (inputText.trim() === '') return;
 
@@ -61,9 +62,9 @@ const ChatAI = () => {
     flatListRef.current?.scrollToEnd({ animated: true });
 
     try {
-      if (!apiKey) {
-        throw new Error("API key tidak tersedia. Silakan periksa konfigurasi aplikasi.");
-      }
+      if (!apiKey) throw new Error("API key tidak tersedia.");
+
+      await saveMessageToSupabase(userMessage); // simpan pesan user
 
       const formattedMessages = formatMessagesForOpenAI(updatedMessages);
 
@@ -72,7 +73,7 @@ const ChatAI = () => {
         messages: [
           {
             role: "system",
-            content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. Berikan informasi yang akurat dan ramah tentang program bantuan sosial, persyaratan, dan prosedur pelayanan. Jika ditanya tentang hal di luar konteks Dinas Sosial, minta pengguna untuk mengajukan pertanyaan yang relevan dengan layanan Dinas Sosial."
+            content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. jika ditanyai selain seputar Dinas Sosial, arahkan untuk bertanya seputar Dinas sosial"
           },
           ...formattedMessages
         ],
@@ -85,33 +86,30 @@ const ChatAI = () => {
         isUser: false,
       };
 
-      setMessages(prevMessages => {
-        const updated = [...prevMessages, botResponse];
-        setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
-        return updated;
-      });
+      await saveMessageToSupabase(botResponse); // simpan pesan bot
+
+      setMessages(prev => [...prev, botResponse]);
+      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
     } catch (error) {
       console.error('Error:', error);
       const errorMessage = {
         id: Date.now().toString() + '-error',
-        text: 'Maaf, terjadi kesalahan saat menghubungi server. Silakan coba lagi nanti.',
+        text: 'Maaf, terjadi kesalahan saat menghubungi server.',
         isUser: false,
         isError: true,
       };
 
-      setMessages(prevMessages => [...prevMessages, errorMessage]);
+      setMessages(prev => [...prev, errorMessage]);
 
       if (__DEV__) {
-        Alert.alert('Error', error.message || 'Unknown error occurred');
+        Alert.alert('Error', error.message || 'Terjadi kesalahan.');
       }
     } finally {
       setIsLoading(false);
     }
   };
 
-  const dismissKeyboard = () => {
-    Keyboard.dismiss();
-  };
+  const dismissKeyboard = () => Keyboard.dismiss();
 
   const renderItem = ({ item }) => (
     <View style={[
@@ -121,11 +119,7 @@ const ChatAI = () => {
     ]}>
       {!item.isUser && (
         <View style={styles.avatarContainer}>
-          <Image
-            source={require('../../../assets/images/cakji.png')}
-            style={styles.avatar}
-            defaultSource={require('../../../assets/images/cakji.png')}
-          />
+          <Image source={require('../../../assets/images/cakji.png')} style={styles.avatar} />
         </View>
       )}
       <View style={[
@@ -140,17 +134,12 @@ const ChatAI = () => {
   );
 
   return (
-    <TouchableWithoutFeedback onPress={dismissKeyboard} accessible={false}>
+    <TouchableWithoutFeedback onPress={dismissKeyboard}>
       <View style={styles.container}>
         <StatusBar style="light" />
-
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <Image
-              source={require('../../../assets/images/cakji.png')}
-              style={styles.avatar}
-              defaultSource={require('../../../assets/images/cakji.png')}
-            />
+            <Image source={require('../../../assets/images/cakji.png')} style={styles.avatar} />
           </View>
           <Text style={styles.headerText}>Tanya JSC</Text>
         </View>
@@ -168,7 +157,6 @@ const ChatAI = () => {
 
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={Platform.OS === 'ios' ? 0 : 0}
           style={styles.inputWrapper}
         >
           <View style={styles.inputContainer}>
