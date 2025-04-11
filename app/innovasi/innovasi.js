@@ -19,6 +19,8 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { db } from '../../firebase';
 import { collection, getDocs } from 'firebase/firestore';
 
+import LoadingScreen from "../components/LoadingScreen";
+
 const InnovationScreen = () => {
   const [innovationItems, setInnovationItems] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -62,9 +64,10 @@ const InnovationScreen = () => {
   // Render loading
   if (loading) {
     return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#33A9FF" />
-      </SafeAreaView>
+      // <SafeAreaView style={styles.container}>
+      //   <ActivityIndicator size="large" color="#33A9FF" />
+      // </SafeAreaView>
+      < LoadingScreen />
     );
   }
 

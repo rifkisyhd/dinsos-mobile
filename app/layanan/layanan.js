@@ -6,6 +6,7 @@ import { useRouter } from "expo-router";
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from "../../firebase";
 
+import LoadingScreen from "../components/LoadingScreen";
 export default function LayananScreen() {
     const router = useRouter();
     const [services, setServices] = useState([]);
@@ -33,9 +34,10 @@ export default function LayananScreen() {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#33A9FF" />
-            </View>
+            // <View style={styles.loadingContainer}>
+            //     <ActivityIndicator size="large" color="#33A9FF" />
+            // </View>
+            < LoadingScreen />
         );
     }
 
