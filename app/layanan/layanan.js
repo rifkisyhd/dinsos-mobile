@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { useRouter } from "expo-router";
 
+import LoadingScreen from "../components/LoadingScreen";
 export default function LayananScreen() {
     const router = useRouter();
     const [services, setServices] = useState([]);
@@ -31,9 +32,10 @@ export default function LayananScreen() {
 
     if (loading) {
         return (
-            <View style={styles.loadingContainer}>
-                <ActivityIndicator size="large" color="#33A9FF" />
-            </View>
+            // <View style={styles.loadingContainer}>
+            //     <ActivityIndicator size="large" color="#33A9FF" />
+            // </View>
+            < LoadingScreen />
         );
     }
 
