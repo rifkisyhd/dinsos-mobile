@@ -16,9 +16,6 @@ import styles from "./styles";
 import { router } from "expo-router";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { db } from '../../firebase';
-import { collection, getDocs } from 'firebase/firestore';
-
 const InnovationScreen = () => {
   const [innovationItems, setInnovationItems] = useState([]);
   const [loading, setLoading] = useState(true);

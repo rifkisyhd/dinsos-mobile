@@ -33,7 +33,6 @@
     "expo-symbols": "~0.2.2",
     "expo-system-ui": "~4.0.8",
     "expo-web-browser": "~14.0.2",
-    "firebase": "^11.4.0",
     "lottie-react-native": "7.1.0",
     "openai": "^4.87.4",
     "react": "18.3.1",
@@ -52,6 +51,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",
+    "@react-native-community/cli": "^18.0.0",
     "@types/jest": "^29.5.12",
     "@types/react": "~18.3.12",
     "@types/react-test-renderer": "^18.3.0",

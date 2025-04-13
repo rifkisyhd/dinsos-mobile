@@ -1,24 +1,18 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
+  SafeAreaView,
   View,
   Text,
+  ScrollView,
   Image,
   TouchableOpacity,
-  SafeAreaView,
+  ActivityIndicator,
   StatusBar,
-  ScrollView,
-  ActivityIndicator
-} from 'react-native';
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./styles";
 import { useRouter } from "expo-router";
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../../firebase";
-import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../../firebase";
-import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
+import { styles } from "./styles";
+import { supabase } from "../../lib/supabaseClient"; // pastikan path ini sesuai struktur project kamu
 
 export default function PerizinanScreen() {
   const router = useRouter();
@@ -28,44 +22,12 @@ export default function PerizinanScreen() {
   useEffect(() => {
     const fetchPerizinanItems = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
-        const items = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setPerizinanItems(items);
-        setLoading(false);
+        const { data, error } = await supabase.from("tb_perizinan").select("*");
+        if (error) throw error;
+        setPerizinanItems(data);
       } catch (error) {
-        console.error("Error fetching perizinan items: ", error);
-        setLoading(false);
-      }
-    };
-
-    fetchPerizinanItems();
-  }, []);
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#33A9FF" />
-      </SafeAreaView>
-    );
-  }
-  const [perizinanItems, setPerizinanItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPerizinanItems = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
-        const items = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setPerizinanItems(items);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching perizinan items: ", error);
+        console.error("Error fetching perizinan items:", error.message);
+      } finally {
         setLoading(false);
       }
     };
@@ -84,24 +46,23 @@ export default function PerizinanScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
- {/* Header */}
- <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Perizinan</Text>
-        </View>
-        
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Perizinan</Text>
+      </View>
+
       <ScrollView
         style={{ flex: 1 }}
         contentContainerStyle={{ paddingBottom: 20 }}
         keyboardShouldPersistTaps="handled"
       >
-
-        {/* Content */}
         <View style={styles.content}>
           {perizinanItems.map((item) => (
             <TouchableOpacity key={item.id} style={styles.card}>
@@ -111,7 +72,7 @@ export default function PerizinanScreen() {
                   <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
                 </View>
                 <Image
-                  source={{ uri: item.imageUrl }}
+                  source={{ uri: item.image_url || "https://via.placeholder.com/150" }}
                   style={styles.cardImage}
                 />
               </View>
@@ -119,6 +80,7 @@ export default function PerizinanScreen() {
           ))}
         </View>
       </ScrollView>
+
       <View style={styles.homeIndicator} />
     </SafeAreaView>
   );

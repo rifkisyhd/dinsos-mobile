@@ -1,52 +1,88 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef } from "react";
 import {
-  View, Text, TextInput, TouchableOpacity, FlatList,
-  Keyboard, StyleSheet, ActivityIndicator, TouchableWithoutFeedback,
-  KeyboardAvoidingView, Platform, Image, Alert
-} from 'react-native';
-import { StatusBar } from 'expo-status-bar';
-import { useRouter } from 'expo-router';
-import { Ionicons } from '@expo/vector-icons';
-import { styles } from './styles';
-import OpenAI from 'openai';
-import Constants from 'expo-constants';
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  FlatList,
+  Keyboard,
+  StyleSheet,
+  ActivityIndicator,
+  TouchableWithoutFeedback,
+  KeyboardAvoidingView,
+  Platform,
+  Image,
+  Alert,
+} from "react-native";
+import { StatusBar } from "expo-status-bar";
+import { useRouter } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { styles } from "./styles";
+import OpenAI from "openai";
+import Constants from "expo-constants";
 
-import { supabase } from '../../../lib/supabaseClient';
+import { supabase } from "../../../lib/supabaseClient";
 
-const apiKey = Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY || process.env.EXPO_PUBLIC_OPENAI_API_KEY;
+const apiKey =
+  Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY ||
+  process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 
 const openai = new OpenAI({ apiKey });
+
+const fetchFileContent = async () => {
+  const { data, error } = await supabase
+    .storage
+    .from('chat-jsc')
+    .download('boloku.txt');
+
+  if (error || !data) {
+    console.error('Gagal ambil file:', error?.message || 'Data kosong');
+    return '';
+  }
+
+  try {
+    const text = await data.text(); // ✅ kalau `data` adalah Blob
+    return text;
+  } catch (err) {
+    console.error('Gagal parsing isi file:', err.message);
+    return '';
+  }
+};
 
 const ChatAI = () => {
   const router = useRouter();
   const [messages, setMessages] = useState([
-    { id: '1', text: 'Halo! Kawan Sosial. Ada yang bisa saya bantu?', isUser: false }
+    {
+      id: "1",
+      text: "Halo! Kawan Sosial. Ada yang bisa saya bantu?",
+      isUser: false,
+    },
   ]);
-  const [inputText, setInputText] = useState('');
+  const [inputText, setInputText] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const flatListRef = useRef(null);
 
   const formatMessagesForOpenAI = (messages) => {
-    return messages.map(msg => ({
-      role: msg.isUser ? 'user' : 'assistant',
-      content: msg.text
+    return messages.map((msg) => ({
+      role: msg.isUser ? "user" : "assistant",
+      content: msg.text,
     }));
   };
 
   const saveMessageToSupabase = async (msg) => {
-    const { error } = await supabase.from('chats').insert({
+    const { error } = await supabase.from("chats").insert({
       message: msg.text,
       is_user: msg.isUser,
-      created_at: new Date().toISOString()
+      created_at: new Date().toISOString(),
     });
 
     if (error) {
-      console.error('Gagal menyimpan chat:', error.message);
+      console.error("Gagal menyimpan chat:", error.message);
     }
   };
 
   const sendMessage = async () => {
-    if (inputText.trim() === '') return;
+    if (inputText.trim() === "") return;
 
     const userMessage = {
       id: Date.now().toString(),
@@ -56,7 +92,7 @@ const ChatAI = () => {
 
     const updatedMessages = [...messages, userMessage];
     setMessages(updatedMessages);
-    setInputText('');
+    setInputText("");
     setIsLoading(true);
 
     flatListRef.current?.scrollToEnd({ animated: true });
@@ -64,45 +100,52 @@ const ChatAI = () => {
     try {
       if (!apiKey) throw new Error("API key tidak tersedia.");
 
-      await saveMessageToSupabase(userMessage); // simpan pesan user
+      await saveMessageToSupabase(userMessage);
 
       const formattedMessages = formatMessagesForOpenAI(updatedMessages);
+
+      const fileContent = await fetchFileContent();
 
       const response = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         messages: [
           {
             role: "system",
-            content: "Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. jika ditanyai selain seputar Dinas Sosial, arahkan untuk bertanya seputar Dinas sosial"
+            // content: `Anda adalah asisten AI Dinsos Mobile yang membantu pengguna dengan informasi dan layanan Dinas Sosial. Jika ditanyai di luar topik, arahkan untuk bertanya seputar Dinas Sosial. Berikut adalah informasi referensi:\n\n${fileContent}`
+            content: `Anda adalah asisten AI Dinsos Mobile. Jawablah hanya berdasarkan dokumen di bawah ini. Jika tidak ada jawaban yang relevan, balas dengan "Maaf, saya tidak memiliki informasi tersebut."
+Berikut adalah informasi referensi:\n\n${fileContent}`,
           },
-          ...formattedMessages
+          ...formattedMessages,
         ],
         temperature: 0.7,
       });
 
       const botResponse = {
-        id: Date.now().toString() + '-bot',
+        id: Date.now().toString() + "-bot",
         text: response.choices[0].message.content,
         isUser: false,
       };
 
-      await saveMessageToSupabase(botResponse); // simpan pesan bot
+      await saveMessageToSupabase(botResponse);
 
-      setMessages(prev => [...prev, botResponse]);
-      setTimeout(() => flatListRef.current?.scrollToEnd({ animated: true }), 100);
+      setMessages((prev) => [...prev, botResponse]);
+      setTimeout(
+        () => flatListRef.current?.scrollToEnd({ animated: true }),
+        100
+      );
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
       const errorMessage = {
-        id: Date.now().toString() + '-error',
-        text: 'Maaf, terjadi kesalahan saat menghubungi server.',
+        id: Date.now().toString() + "-error",
+        text: "Maaf, terjadi kesalahan saat menghubungi server.",
         isUser: false,
         isError: true,
       };
 
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
 
       if (__DEV__) {
-        Alert.alert('Error', error.message || 'Terjadi kesalahan.');
+        Alert.alert("Error", error.message || "Terjadi kesalahan.");
       }
     } finally {
       setIsLoading(false);
@@ -112,20 +155,27 @@ const ChatAI = () => {
   const dismissKeyboard = () => Keyboard.dismiss();
 
   const renderItem = ({ item }) => (
-    <View style={[
-      styles.messageBubble,
-      item.isUser ? styles.userBubble : styles.botBubble,
-      item.isError && styles.errorBubble
-    ]}>
+    <View
+      style={[
+        styles.messageBubble,
+        item.isUser ? styles.userBubble : styles.botBubble,
+        item.isError && styles.errorBubble,
+      ]}
+    >
       {!item.isUser && (
         <View style={styles.avatarContainer}>
-          <Image source={require('../../../assets/images/cakji.png')} style={styles.avatar} />
+          <Image
+            source={require("../../../assets/images/cakji.png")}
+            style={styles.avatar}
+          />
         </View>
       )}
-      <View style={[
-        styles.messageContent,
-        item.isUser ? styles.userContent : styles.botContent
-      ]}>
+      <View
+        style={[
+          styles.messageContent,
+          item.isUser ? styles.userContent : styles.botContent,
+        ]}
+      >
         <Text style={item.isUser ? styles.userText : styles.botText}>
           {item.text}
         </Text>
@@ -139,7 +189,10 @@ const ChatAI = () => {
         <StatusBar style="light" />
         <View style={styles.header}>
           <View style={styles.avatarContainer}>
-            <Image source={require('../../../assets/images/cakji.png')} style={styles.avatar} />
+            <Image
+              source={require("../../../assets/images/cakji.png")}
+              style={styles.avatar}
+            />
           </View>
           <Text style={styles.headerText}>Tanya JSC</Text>
         </View>
@@ -148,15 +201,17 @@ const ChatAI = () => {
           ref={flatListRef}
           data={messages}
           renderItem={renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={(item) => item.id}
           style={styles.messageList}
           contentContainerStyle={styles.messageListContent}
-          onContentSizeChange={() => flatListRef.current?.scrollToEnd({ animated: true })}
+          onContentSizeChange={() =>
+            flatListRef.current?.scrollToEnd({ animated: true })
+          }
           keyboardShouldPersistTaps="handled"
         />
 
         <KeyboardAvoidingView
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          behavior={Platform.OS === "ios" ? "padding" : "height"}
           style={styles.inputWrapper}
         >
           <View style={styles.inputContainer}>
@@ -170,12 +225,19 @@ const ChatAI = () => {
               maxHeight={100}
             />
             {isLoading ? (
-              <ActivityIndicator size="small" color="#0084ff" style={styles.sendButton} />
+              <ActivityIndicator
+                size="small"
+                color="#0084ff"
+                style={styles.sendButton}
+              />
             ) : (
               <TouchableOpacity
-                style={[styles.sendButton, inputText.trim() === '' && styles.sendButtonDisabled]}
+                style={[
+                  styles.sendButton,
+                  inputText.trim() === "" && styles.sendButtonDisabled,
+                ]}
                 onPress={sendMessage}
-                disabled={inputText.trim() === ''}
+                disabled={inputText.trim() === ""}
               >
                 <Ionicons name="send" size={20} color="white" />
               </TouchableOpacity>
