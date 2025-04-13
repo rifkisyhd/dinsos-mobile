@@ -54,7 +54,6 @@ export default function App() {
         if (selectedUPT) {
           query = query.eq("category", selectedUPT.id);
           console.log("Selected UPT:", selectedUPT);
-
         }
 
         const { data, error } = await query;

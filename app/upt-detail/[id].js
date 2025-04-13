@@ -6,66 +6,57 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView,
-  ActivityIndicator,
-  StyleSheet,
   Linking,
-  StatusBar
+  StatusBar,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter, useLocalSearchParams } from "expo-router";
-// import MapView, { Marker } from "react-native-maps";
+import { supabase } from "../../lib/supabaseClient";
 import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
-
 
 export default function UPTDetail() {
   const router = useRouter();
   const { id } = useLocalSearchParams();
 
   const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
   const [categoryName, setCategoryName] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLocationDetail = async () => {
+    const fetchDetail = async () => {
       try {
         setLoading(true);
 
-        // Fetch location data
-        const locationDocRef = doc(db, "upt_locations", id);
-        const locationDocSnap = await getDoc(locationDocRef);
+        // Fetch UPT data
+        const { data: uptData, error: uptError } = await supabase
+          .from("tb_upt")
+          .select("*")
+          .eq("id", id)
+          .single();
 
-        if (locationDocSnap.exists()) {
-          const locationData = {
-            id: locationDocSnap.id,
-            ...locationDocSnap.data(),
-          };
-          setLocation(locationData);
+        if (uptError) throw uptError;
+        setLocation(uptData);
 
-          // Fetch category data
-          const categoryDocRef = doc(
-            db,
-            "upt_categories",
-            locationData.categoryId
-          );
-          const categoryDocSnap = await getDoc(categoryDocRef);
+        // Fetch category data
+        const { data: categoryData, error: categoryError } = await supabase
+          .from("tb_category")
+          .select("name")
+          .eq("id", uptData.category)
+          .single();
 
-          if (categoryDocSnap.exists()) {
-            setCategoryName(categoryDocSnap.data().name);
-          }
-        } else {
-          console.log("UPT tidak ditemukan!");
-          router.back();
-        }
+        if (categoryError) throw categoryError;
+        setCategoryName(categoryData.name);
       } catch (error) {
         console.error("Error fetching UPT detail: ", error);
+        router.back();
       } finally {
         setLoading(false);
       }
     };
 
     if (id) {
-      fetchLocationDetail();
+      fetchDetail();
     }
   }, [id]);
 
@@ -84,21 +75,16 @@ export default function UPTDetail() {
     }
   };
 
-  if (loading) {
-    return (
-        <LoadingScreen />
-    );
-  }
+  if (loading) return <LoadingScreen />;
 
   return (
     <ScrollView>
-        <StatusBar barStyle="dark-content" backgroundColor="#3498db" />
-
+      <StatusBar barStyle="dark-content" backgroundColor="#3498db" />
       <SafeAreaView style={styles.container}>
-        {/* Header Image */}
+        {/* Gambar UPT */}
         <View style={styles.imageContainer}>
           <Image
-            source={{ uri: location?.imageUrl }}
+            source={{ uri: location?.image_url || "https://via.placeholder.com/300" }}
             style={styles.headerImage}
             defaultSource={require("../../assets/images/lokasi1.png")}
           />
@@ -110,20 +96,18 @@ export default function UPTDetail() {
           </TouchableOpacity>
         </View>
 
+        {/* Konten */}
         <ScrollView style={styles.content}>
-          {/* Title and Category */}
+          {/* Judul dan Kategori */}
           <View style={styles.titleContainer}>
             <Text style={styles.title}>{location?.name}</Text>
             <Text style={styles.category}>{categoryName}</Text>
           </View>
 
-          {/* Contact and Location */}
+          {/* Informasi Telepon dan Alamat */}
           <View style={styles.infoSection}>
             {location?.phone && (
-              <TouchableOpacity
-                style={styles.infoItem}
-                onPress={handleCallPhone}
-              >
+              <TouchableOpacity style={styles.infoItem} onPress={handleCallPhone}>
                 <View style={styles.infoIconContainer}>
                   <Ionicons name="call-outline" size={20} color="#3498db" />
                 </View>
@@ -135,10 +119,7 @@ export default function UPTDetail() {
             )}
 
             {location?.address && (
-              <TouchableOpacity
-                style={styles.infoItem}
-                onPress={handleOpenMaps}
-              >
+              <TouchableOpacity style={styles.infoItem} onPress={handleOpenMaps}>
                 <View style={styles.infoIconContainer}>
                   <Ionicons name="location-outline" size={20} color="#3498db" />
                 </View>
@@ -149,32 +130,8 @@ export default function UPTDetail() {
               </TouchableOpacity>
             )}
           </View>
-          {/* Menampilkan Peta */}
-          {/* {location?.latitude && location?.longitude && (
-          <View style={styles.mapContainer}>
-            <MapView
-              style={styles.map}
-              provider="google"
-              initialRegion={{
-                latitude: location.latitude,
-                longitude: location.longitude,
-                latitudeDelta: 0.0922,
-                longitudeDelta: 0.0421,
-              }}
-            >
-              <Marker
-                coordinate={{
-                  latitude: location.latitude,
-                  longitude: location.longitude,
-                }}
-                title={location.name}
-                description={location.address}
-              />
-            </MapView>
-          </View>
-        )} */}
 
-          {/* Description */}
+          {/* Deskripsi */}
           {location?.description && (
             <View style={styles.descriptionSection}>
               <Text style={styles.sectionTitle}>Deskripsi</Text>
