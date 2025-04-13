@@ -3,8 +3,6 @@ import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, StatusBa
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { useRouter } from "expo-router";
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../../firebase";
 
 import LoadingScreen from "../components/LoadingScreen";
 export default function LayananScreen() {
