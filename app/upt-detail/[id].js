@@ -106,26 +106,26 @@ export default function UPTDetail() {
 
           {/* Informasi Telepon dan Alamat */}
           <View style={styles.infoSection}>
-            {location?.phone && (
+            {location?.number && (
               <TouchableOpacity style={styles.infoItem} onPress={handleCallPhone}>
                 <View style={styles.infoIconContainer}>
                   <Ionicons name="call-outline" size={20} color="#3498db" />
                 </View>
                 <View style={styles.infoTextContainer}>
-                  <Text style={styles.infoLabel}>Telepon</Text>
-                  <Text style={styles.infoValue}>{location.phone}</Text>
+                  <Text style={styles.infoLabel}>Kontak</Text>
+                  <Text style={styles.infoValue}>{location.number}</Text>
                 </View>
               </TouchableOpacity>
             )}
 
-            {location?.address && (
+            {location?.location && (
               <TouchableOpacity style={styles.infoItem} onPress={handleOpenMaps}>
                 <View style={styles.infoIconContainer}>
                   <Ionicons name="location-outline" size={20} color="#3498db" />
                 </View>
                 <View style={styles.infoTextContainer}>
-                  <Text style={styles.infoLabel}>Alamat</Text>
-                  <Text style={styles.infoValue}>{location.address}</Text>
+                  <Text style={styles.infoLabel}>Lokasi</Text>
+                  <Text style={styles.infoValue}>{location.location}</Text>
                 </View>
               </TouchableOpacity>
             )}

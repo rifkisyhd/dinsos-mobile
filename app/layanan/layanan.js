@@ -1,10 +1,19 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, View, Text, Image, TouchableOpacity, SafeAreaView, StatusBar, ActivityIndicator } from 'react-native';
+import { 
+StyleSheet, 
+View, 
+Text, 
+Image, 
+TouchableOpacity, 
+SafeAreaView, 
+StatusBar 
+} from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { styles } from './styles';
 import { useRouter } from "expo-router";
-
 import LoadingScreen from "../components/LoadingScreen";
+import { supabase } from '../../lib/supabaseClient';
+
 export default function LayananScreen() {
     const router = useRouter();
     const [services, setServices] = useState([]);
@@ -13,16 +22,16 @@ export default function LayananScreen() {
     useEffect(() => {
         const fetchServices = async () => {
             try {
-                const servicesCollection = collection(db, 'db_layanan');
-                const servicesSnapshot = await getDocs(servicesCollection);
-                const servicesList = servicesSnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data()
-                }));
-                setServices(servicesList);
-                setLoading(false);
+                const { data, error } = await supabase
+                    .from('tb_layanan')
+                    .select('*');
+
+                if (error) throw error;
+
+                setServices(data);
             } catch (error) {
-                console.error("Error fetching services: ", error);
+                console.error("Error fetching services from Supabase: ", error);
+            } finally {
                 setLoading(false);
             }
         };
@@ -31,18 +40,13 @@ export default function LayananScreen() {
     }, []);
 
     if (loading) {
-        return (
-            // <View style={styles.loadingContainer}>
-            //     <ActivityIndicator size="large" color="#33A9FF" />
-            // </View>
-            < LoadingScreen />
-        );
+        return <LoadingScreen />;
     }
 
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
-            
+
             {/* Header */}
             <View style={styles.header}>
                 <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
@@ -50,14 +54,14 @@ export default function LayananScreen() {
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Layanan</Text>
             </View>
-            
+
             {/* Services List */}
             <View style={styles.content}>
                 {services.map((item) => (
                     <TouchableOpacity 
                         key={item.id} 
                         style={styles.card}
-                        onPress={() => {/* Optional navigation logic */}}
+                        onPress={() => {/* Tambahkan navigasi jika diperlukan */}}
                     >
                         <View style={styles.cardContent}>
                             <View style={styles.cardTextContainer}>
@@ -66,9 +70,9 @@ export default function LayananScreen() {
                                     <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
                                 )}
                             </View>
-                            {item.imageUrl && (
+                            {item.image_url && (
                                 <Image 
-                                    source={{ uri: item.imageUrl }} 
+                                    source={{ uri: item.image_url }} 
                                     style={styles.cardImage} 
                                     resizeMode="contain"
                                 />
@@ -81,11 +85,3 @@ export default function LayananScreen() {
         </SafeAreaView>
     );
 }
-
-const additionalStyles = StyleSheet.create({
-    loadingContainer: {
-        flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
-    }
-});
