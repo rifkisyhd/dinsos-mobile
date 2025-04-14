@@ -60,21 +60,6 @@ export default function HomeScreen() {
               : "Selamat Malam Kawan Showsial"}
           </Text>
 
-          {/* <View style={styles.searchContainer}>
-              <TextInput
-                placeholder="Cari ..."
-                placeholderTextColor="gray"
-                style={styles.searchInput}
-                onChangeText={(text) => console.log(text)}
-              />
-              <EvilIcons
-                name="search"
-                size={34}
-                color="gray"
-                style={styles.searchIcon}
-              />
-            </View> */}
-
           <MenuItemsList />
 
           <View style={styles.main}>
@@ -94,16 +79,15 @@ export default function HomeScreen() {
                 />
               </TouchableOpacity>
 
+              {/* Modal untuk Astacita */}
               <ImageViewing
-                key={modalVisibleAstacita ? "open" : "closed"} // Reset modal saat berubah
+                key={modalVisibleAstacita ? "open-astacita" : "closed-astacita"} // Menambahkan key yang berbeda
                 visible={modalVisibleAstacita}
-                images={[
-                  {
-                    uri: Image.resolveAssetSource(
-                      require("../../assets/images/popup.png")
-                    ).uri,
-                  },
-                ]}
+                images={[{
+                  uri: Image.resolveAssetSource(
+                    require("../../assets/images/asacita.png") // Ganti dengan gambar popup yang sesuai
+                  ).uri,
+                }]}
                 onRequestClose={() => setModalVisibleAstacita(false)}
               />
             </View>
@@ -124,16 +108,15 @@ export default function HomeScreen() {
                 />
               </TouchableOpacity>
 
+              {/* Modal untuk Nawa Bhakti Satya */}
               <ImageViewing
-                key={modalVisibleNawa ? "open" : "closed"} // Reset modal saat berubah
+                key={modalVisibleNawa ? "open-nawa" : "closed-nawa"} // Menambahkan key yang berbeda
                 visible={modalVisibleNawa}
-                images={[
-                  {
-                    uri: Image.resolveAssetSource(
-                      require("../../assets/images/popup.png")
-                    ).uri,
-                  },
-                ]}
+                images={[{
+                  uri: Image.resolveAssetSource(
+                    require("../../assets/images/popup.png") // Ganti dengan gambar popup yang sesuai
+                  ).uri,
+                }]}
                 onRequestClose={() => setModalVisibleNawa(false)}
               />
             </View>

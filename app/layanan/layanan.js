@@ -1,18 +1,18 @@
-import React, { useState, useEffect } from 'react';
-import { 
+import React, { useState, useEffect } from "react";
+import {
 StyleSheet, 
-View, 
-Text, 
-Image, 
-TouchableOpacity, 
-SafeAreaView, 
-StatusBar 
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-import { styles } from './styles';
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    SafeAreaView,
+    StatusBar,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import { styles } from "./styles";
 import { useRouter } from "expo-router";
 import LoadingScreen from "../components/LoadingScreen";
-import { supabase } from '../../lib/supabaseClient';
+import { supabase } from "../../lib/supabaseClient";
 
 export default function LayananScreen() {
     const router = useRouter();
@@ -23,8 +23,8 @@ export default function LayananScreen() {
         const fetchServices = async () => {
             try {
                 const { data, error } = await supabase
-                    .from('tb_layanan')
-                    .select('*');
+                    .from("tb_layanan")
+                    .select("*");
 
                 if (error) throw error;
 
@@ -39,48 +39,56 @@ export default function LayananScreen() {
         fetchServices();
     }, []);
 
-    if (loading) {
-        return <LoadingScreen />;
-    }
-
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
 
-            {/* Header */}
+            {/* Header tetap tampil */}
             <View style={styles.header}>
-                <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
+                <TouchableOpacity
+                    style={styles.backButton}
+                    onPress={() => router.back()}>
                     <Ionicons name="arrow-back" size={24} color="white" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Layanan</Text>
             </View>
 
-            {/* Services List */}
-            <View style={styles.content}>
-                {services.map((item) => (
-                    <TouchableOpacity 
-                        key={item.id} 
-                        style={styles.card}
-                        onPress={() => {/* Tambahkan navigasi jika diperlukan */}}
-                    >
-                        <View style={styles.cardContent}>
-                            <View style={styles.cardTextContainer}>
-                                <Text style={styles.cardTitle}>{item.title}</Text>
-                                {item.subtitle && (
-                                    <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+            {/* Jika sedang loading, tampilkan LoadingScreen */}
+            {loading ? (
+                <LoadingScreen />
+            ) : (
+                <View style={styles.content}>
+                    {services.map((item) => (
+                        <TouchableOpacity
+                            key={item.id}
+                            style={styles.card}
+                            onPress={() => {
+                                /* Tambahkan navigasi jika diperlukan */
+                            }}>
+                            <View style={styles.cardContent}>
+                                <View style={styles.cardTextContainer}>
+                                    <Text style={styles.cardTitle}>
+                                        {item.title}
+                                    </Text>
+                                    {item.subtitle && (
+                                        <Text style={styles.cardSubtitle}>
+                                            {item.subtitle}
+                                        </Text>
+                                    )}
+                                </View>
+                                {item.image_url && (
+                                    <Image
+                                        source={{ uri: item.image_url }}
+                                        style={styles.cardImage}
+                                        resizeMode="contain"
+                                    />
                                 )}
                             </View>
-                            {item.image_url && (
-                                <Image 
-                                    source={{ uri: item.image_url }} 
-                                    style={styles.cardImage} 
-                                    resizeMode="contain"
-                                />
-                            )}
-                        </View>
-                    </TouchableOpacity>
-                ))}
-            </View>
+                        </TouchableOpacity>
+                    ))}
+                </View>
+            )}
+
             <View style={styles.homeIndicator} />
         </SafeAreaView>
     );
