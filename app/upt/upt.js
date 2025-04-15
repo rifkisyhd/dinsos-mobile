@@ -108,6 +108,8 @@ export default function App() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={true}
           contentContainerStyle={styles.scrollViewContent}
+          bounces={false} 
+          overScrollMode="never" 
         >
           {locations.length > 0 ? (
             <View style={styles.gridContainer}>
