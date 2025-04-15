@@ -31,7 +31,8 @@ const openai = new OpenAI({ apiKey });
 const fetchFileContent = async () => {
     const { data, error } = await supabase.storage
         .from("chat-jsc")
-        .download("boloku.txt");
+        .download(`faq.json?t=${Date.now()}`);
+
 
     if (error || !data) {
         console.error("Gagal ambil file:", error?.message || "Data kosong");
@@ -39,10 +40,28 @@ const fetchFileContent = async () => {
     }
 
     try {
-        const text = await data.text();
-        return text;
+        const reader = new FileReader();
+        return await new Promise((resolve, reject) => {
+            reader.onload = () => {
+                try {
+                    const json = JSON.parse(reader.result);
+                    const combinedText = json.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
+                    resolve(combinedText);
+                } catch (parseErr) {
+                    console.error("Gagal parsing isi file JSON:", parseErr.message);
+                    reject("");
+                }
+            };
+
+            reader.onerror = () => {
+                console.error("Gagal membaca file dengan FileReader");
+                reject("");
+            };
+
+            reader.readAsText(data);
+        });
     } catch (err) {
-        console.error("Gagal parsing isi file:", err.message);
+        console.error("Error saat membaca dan parsing JSON:", err.message);
         return "";
     }
 };
@@ -52,7 +71,7 @@ const ChatAI = () => {
     const [messages, setMessages] = useState([
         {
             id: "1",
-            text: "Halo! Kawan Sosial. Ada yang bisa saya bantu?",
+            text: "Halo! Kawan Showsial. Ada yang bisa Cak J Bantu?",
             isUser: false,
         },
     ]);
@@ -119,43 +138,28 @@ useEffect(() => {
       };
   }
 }, []);
-    
-
-    const formatMessagesForOpenAI = (messages) => {
-        return messages.map((msg) => ({
-            role: msg.isUser ? "user" : "assistant",
-            content: msg.text,
-        }));
-    };
-
-    const saveMessageToSupabase = async (msg) => {
-        const { error } = await supabase.from("chats").insert({
-            message: msg.text,
-            is_user: msg.isUser,
-            created_at: new Date().toISOString(),
-        });
-
-        if (error) {
-            console.error("Gagal menyimpan chat:", error.message);
-        }
-    };
-
+const formatMessagesForOpenAI = (messages) => {
+    return messages.map((msg) => ({
+      role: msg.isUser ? "user" : "assistant",
+      content: msg.text,
+    }));
+  };
+  
     const sendMessage = async () => {
         if (inputText.trim() === "") return;
-
+    
         const userMessage = {
             id: Date.now().toString(),
             text: inputText,
             isUser: true,
         };
-
+    
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInputText("");
-        
+    
         scrollToBottom();
-
-        // dummy message "Sedang berpikir..."
+    
         const typingMessage = {
             id: "typing-indicator",
             text: "Sedang berpikir...",
@@ -163,42 +167,49 @@ useEffect(() => {
             isTyping: true,
         };
         setMessages((prev) => [...prev, typingMessage]);
-
+    
         try {
             if (!apiKey) throw new Error("API key tidak tersedia.");
-
-            await saveMessageToSupabase(userMessage);
-
+    
             const formattedMessages = formatMessagesForOpenAI(updatedMessages);
-
+    
             const fileContent = await fetchFileContent();
-
+    
             const response = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
                 messages: [
                     {
                         role: "system",
-                        content: `Anda adalah asisten AI Dinsos Mobile... \n\n${fileContent}`,
+                        content: `
+                        Anda adalah asisten AI bernama Cak J untuk aplikasi Dinsos Mobile.
+                        Tugas Anda adalah membantu menjawab pertanyaan pengguna seputar layanan Dinas Sosial.
+                        Gunakan daftar FAQ berikut ini sebagai satu-satunya sumber informasi.
+
+                        Pahami makna pertanyaan pengguna. Lakukan pencocokan semantik — tidak harus kata-kata persis sama.
+                        Jika Anda menemukan pertanyaan yang relevan dalam FAQ, jawab dengan jawaban dari FAQ.
+                        Jika tidak ada yang relevan, jawab sesuai dengan informasi yang ada di google untuk membantu kamu."
+
+                        FAQ:
+
+                        ${fileContent}
+                        `,
                     },
                     ...formattedMessages,
                 ],
-                temperature: 0.7,
+                temperature: 0.3,
             });
-
+    
             const botResponse = {
                 id: Date.now().toString() + "-bot",
                 text: response.choices[0].message.content,
                 isUser: false,
             };
-
-            await saveMessageToSupabase(botResponse);
-
-            // Hapus dummy "Sedang berpikir..." dan ganti dengan response asli
+    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 botResponse,
             ]);
-            
+    
             scrollToBottom();
         } catch (error) {
             console.error("Error:", error);
@@ -208,13 +219,13 @@ useEffect(() => {
                 isUser: false,
                 isError: true,
             };
-
+    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 errorMessage,
             ]);
         }
-    };
+    };    
 
     const dismissKeyboard = () => Keyboard.dismiss();
 
