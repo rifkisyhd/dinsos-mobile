@@ -2,7 +2,7 @@ const axios = require('axios');
 
 axios.interceptors.request.use(
   config => {
-    const token = 'token-api-sapabansos-d60db851-60d5-11ee-9001-0a0027000003'; // Ganti dengan token yang valid
+    const token = process.env.TOKEN;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
