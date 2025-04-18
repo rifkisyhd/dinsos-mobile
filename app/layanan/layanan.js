@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
-StyleSheet, 
+    StyleSheet,
     View,
     Text,
     Image,
@@ -62,9 +62,9 @@ export default function LayananScreen() {
                         <TouchableOpacity
                             key={item.id}
                             style={styles.card}
-                            onPress={() => {
-                                /* Tambahkan navigasi jika diperlukan */
-                            }}>
+                            onPress={() =>
+                                router.push(`/layanan-detail/${item.id}`)
+                            }>
                             <View style={styles.cardContent}>
                                 <View style={styles.cardTextContainer}>
                                     <Text style={styles.cardTitle}>

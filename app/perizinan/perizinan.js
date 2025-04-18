@@ -66,7 +66,9 @@ export default function PerizinanScreen() {
         >
           <View style={styles.content}>
             {perizinanItems.map((item) => (
-              <TouchableOpacity key={item.id} style={styles.card}>
+              <TouchableOpacity key={item.id} style={styles.card}
+              onPress={() => router.push(`/perizinan-detail/${item.id}`)}
+              >
                 <View style={styles.cardContent}>
                   <View style={styles.cardTextContainer}>
                     <Text style={styles.cardTitle}>{item.title}</Text>
