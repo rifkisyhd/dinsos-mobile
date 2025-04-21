@@ -1,4 +1,4 @@
-import { StyleSheet, Platform } from 'react-native';
+import { StyleSheet, Platform, StatusBar } from 'react-native';
 
 
 export const styles = StyleSheet.create({
@@ -7,12 +7,18 @@ export const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
   header: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: 100,
+    zIndex: 1000,
     backgroundColor: '#33A9FF',
     flexDirection: 'row',
     alignItems: 'center',
     paddingHorizontal: 16,
     // paddingVertical: 16,
-    paddingTop: Platform.OS === 'ios' ? 50 : 50,
+    paddingTop: Platform.OS === 'ios' ? 30 : 25,
     paddingBottom: Platform.OS === 'ios' ? 20 : 20,
   },
   backButton: {
@@ -21,10 +27,12 @@ export const styles = StyleSheet.create({
   headerText: {
     color: 'white',
     fontSize: 18,
+    marginTop: 20,
     fontWeight: 'bold',
   },
   messageList: {
     flex: 1,
+    paddingTop: Platform.OS === 'ios' ? 60 : 100,
   },
   messageListContent: {
     padding: 10,
@@ -40,7 +48,6 @@ export const styles = StyleSheet.create({
     height: 30,
     marginRight: 8,
     alignSelf: 'flex-end',
-    marginBottom: 5,
   },
   avatar: {
     width: 30,
@@ -110,4 +117,20 @@ export const styles = StyleSheet.create({
   sendButtonDisabled: {
     backgroundColor: '#ccc',
   },
+ // Style untuk typing bubble
+ typingBubble: {
+  flexDirection: 'row',
+  alignSelf: 'flex-start',
+  backgroundColor: '#e5e5e5',
+  borderRadius: 20,
+  padding: 12,
+  marginVertical: 5,
+  marginLeft: '10%',
+},
+typingText: {
+  fontSize: 16,
+  color: '#777',
+  marginRight: 5,
+},
+
 });

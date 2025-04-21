@@ -1,5 +1,5 @@
 import { Tabs } from "expo-router";
-import { Ionicons, FontAwesome } from "@expo/vector-icons";
+import { Ionicons, FontAwesome, FontAwesome5 } from "@expo/vector-icons";
 
 export default function Layout() {
   return (
@@ -34,11 +34,11 @@ export default function Layout() {
         }}
       />
        <Tabs.Screen
-        name="settings"
+        name="sapa-bansos/sapa-bansos"
         options={{
-          title: "Settings",
+          title: "Sapa Bansos",
           tabBarIcon: ({ color, size }) => (
-            <Ionicons name="settings-outline" size={size} color={color} />
+            <FontAwesome5 name="smile" size={size} color={color} />
           ),
         }}
       />

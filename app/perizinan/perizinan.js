@@ -1,24 +1,20 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
 import {
-  StyleSheet,
+  SafeAreaView,
   View,
   Text,
+  ScrollView,
   Image,
   TouchableOpacity,
-  SafeAreaView,
+  ActivityIndicator,
   StatusBar,
-  ScrollView,
-  ActivityIndicator
-} from 'react-native';
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { styles } from "./styles";
 import { useRouter } from "expo-router";
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../../firebase";
-import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
-import { collection, getDocs } from 'firebase/firestore';
-import { db } from "../../firebase";
-import { handleUrlParams } from 'expo-router/build/fork/getStateFromPath-forks';
+import { styles } from "./styles";
+import { supabase } from "../../lib/supabaseClient"; // pastikan path ini sesuai struktur project kamu
+import LoadingScreen from "../components/LoadingScreen";
+
 
 export default function PerizinanScreen() {
   const router = useRouter();
@@ -28,97 +24,69 @@ export default function PerizinanScreen() {
   useEffect(() => {
     const fetchPerizinanItems = async () => {
       try {
-        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
-        const items = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setPerizinanItems(items);
-        setLoading(false);
+        const { data, error } = await supabase.from("tb_perizinan").select("*");
+        if (error) throw error;
+        setPerizinanItems(data);
       } catch (error) {
-        console.error("Error fetching perizinan items: ", error);
+        console.error("Error fetching perizinan items:", error.message);
+      } finally {
         setLoading(false);
       }
     };
 
     fetchPerizinanItems();
   }, []);
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#33A9FF" />
-      </SafeAreaView>
-    );
-  }
-  const [perizinanItems, setPerizinanItems] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchPerizinanItems = async () => {
-      try {
-        const querySnapshot = await getDocs(collection(db, "tb_perizinan"));
-        const items = querySnapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data()
-        }));
-        setPerizinanItems(items);
-        setLoading(false);
-      } catch (error) {
-        console.error("Error fetching perizinan items: ", error);
-        setLoading(false);
-      }
-    };
-
-    fetchPerizinanItems();
-  }, []);
-
-  if (loading) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <ActivityIndicator size="large" color="#33A9FF" />
-      </SafeAreaView>
-    );
-  }
 
   return (
     <SafeAreaView style={styles.container}>
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
- {/* Header */}
- <View style={styles.header}>
-          <TouchableOpacity
-            style={styles.backButton}
-            onPress={() => router.back()}
-          >
-            <Ionicons name="arrow-back" size={24} color="white" />
-          </TouchableOpacity>
-          <Text style={styles.headerTitle}>Perizinan</Text>
-        </View>
-        
-      <ScrollView
-        style={{ flex: 1 }}
-        contentContainerStyle={{ paddingBottom: 20 }}
-        keyboardShouldPersistTaps="handled"
-      >
 
-        {/* Content */}
-        <View style={styles.content}>
-          {perizinanItems.map((item) => (
-            <TouchableOpacity key={item.id} style={styles.card}>
-              <View style={styles.cardContent}>
-                <View style={styles.cardTextContainer}>
-                  <Text style={styles.cardTitle}>{item.title}</Text>
-                  <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+      {/* Header tetap tampil */}
+      <View style={styles.header}>
+        <TouchableOpacity
+          style={styles.backButton}
+          onPress={() => router.back()}
+        >
+          <Ionicons name="arrow-back" size={24} color="white" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Perizinan</Text>
+      </View>
+
+      {/* Jika loading, tampilkan ActivityIndicator */}
+      {loading ? (
+        // <View style={styles.loadingContainer}>
+        //   <ActivityIndicator size="large" color="#33A9FF" />
+        // </View>
+        <LoadingScreen />
+      ) : (
+        <ScrollView
+          style={{ flex: 1 }}
+          contentContainerStyle={{ paddingBottom: 20 }}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            {perizinanItems.map((item) => (
+              <TouchableOpacity key={item.id} style={styles.card}
+              onPress={() => router.push(`/perizinan-detail/${item.id}`)}
+              >
+                <View style={styles.cardContent}>
+                  <View style={styles.cardTextContainer}>
+                    <Text style={styles.cardTitle}>{item.title}</Text>
+                    <Text style={styles.cardSubtitle}>{item.subtitle}</Text>
+                  </View>
+                  <Image
+                    source={{
+                      uri: item.image_url || "https://via.placeholder.com/150",
+                    }}
+                    style={styles.cardImage}
+                  />
                 </View>
-                <Image
-                  source={{ uri: item.imageUrl }}
-                  style={styles.cardImage}
-                />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      )}
+
       <View style={styles.homeIndicator} />
     </SafeAreaView>
   );

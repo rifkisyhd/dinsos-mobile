@@ -15,9 +15,6 @@ const ImagePopup = ({ visible, onClose, imageSource }) => {
     <TouchableWithoutFeedback onPress={onClose}>
       <View style={styles.overlay}>
         <View style={styles.modalContent}>
-          {/* <TouchableOpacity style={styles.closeButton} onPress={onClose}>
-            <Ionicons name="close-circle" size={32} color="white" />
-          </TouchableOpacity> */}
           <Image source={imageSource} style={styles.image} resizeMode="contain" />
         </View>
       </View>

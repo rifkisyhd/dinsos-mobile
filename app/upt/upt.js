@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { StatusBar } from "expo-status-bar";
 import {
   Text,
@@ -6,17 +6,15 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
-  TouchableWithoutFeedback,
   SafeAreaView,
-  ActivityIndicator,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
-import { db } from "../../firebase"; 
-import { collection, getDocs, query, where } from "firebase/firestore";
+import { supabase } from "../../lib/supabaseClient"; // Ganti dengan path sesuai struktur folder kamu
 import LoadingScreen from "../components/LoadingScreen";
 import Dropdown from "./components/Dropdown";
+
 
 export default function App() {
   const router = useRouter();
@@ -28,61 +26,50 @@ export default function App() {
   const [loadingCategories, setLoadingCategories] = useState(true);
   const [isFirstLoad, setIsFirstLoad] = useState(true);
 
-  // Fetch UPT Categories from Firebase
+  // Fetch UPT Categories dari Supabase
   useEffect(() => {
     const fetchCategories = async () => {
-      setLoadingCategories(true); // Tampilkan loading sebelum fetch
+      setLoadingCategories(true);
       try {
-        const categoriesCollection = collection(db, "upt_categories");
-        const categorySnapshot = await getDocs(categoriesCollection);
-        const categoryList = categorySnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setCategories(categoryList);
+        const { data, error } = await supabase.from("tb_category").select("*");
+        if (error) throw error;
+        setCategories(data);
       } catch (error) {
-        console.error("Error fetching categories: ", error);
+        console.error("Error fetching categories:", error);
       } finally {
-        setLoadingCategories(false); // Matikan loading setelah selesai
+        setLoadingCategories(false);
       }
     };
 
     fetchCategories();
   }, []);
 
-  // Fetch UPT Locations from Firebase
+  // Fetch UPT Locations dari Supabase
   useEffect(() => {
     const fetchLocations = async () => {
       try {
         setLoading(true);
-        let locationsQuery;
+        let query = supabase.from("tb_upt").select("*");
+
         if (selectedUPT) {
-          // Filter by selected UPT
-          locationsQuery = query(
-            collection(db, "upt_locations"),
-            where("categoryId", "==", selectedUPT.id)
-          );
-        } else {
-          // Get all locations
-          locationsQuery = collection(db, "upt_locations");
+          query = query.eq("category", selectedUPT.id);
+          console.log("Selected UPT:", selectedUPT);
         }
 
-        const locationSnapshot = await getDocs(locationsQuery);
-        const locationList = locationSnapshot.docs.map((doc) => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setLocations(locationList);
+        const { data, error } = await query;
+        if (error) throw error;
+
+        setLocations(data);
       } catch (error) {
-        console.error("Error fetching locations: ", error);
+        console.error("Error fetching locations:", error);
       } finally {
         if (isFirstLoad) {
           setTimeout(() => {
             setLoading(false);
-            setIsFirstLoad(false); // Setelah fetch pertama, set false biar next fetch langsung
+            setIsFirstLoad(false);
           }, 1000);
         } else {
-          setLoading(false); // Fetch berikutnya langsung tanpa delay
+          setLoading(false);
         }
       }
     };
@@ -105,7 +92,7 @@ export default function App() {
         <Text style={styles.headerTitle}>UPT</Text>
       </View>
 
-      {/* Dropdown dengan loading state */}
+      {/* Dropdown Kategori */}
       <Dropdown
         selectedUPT={selectedUPT}
         setSelectedUPT={setSelectedUPT}
@@ -113,7 +100,7 @@ export default function App() {
         loading={loading}
       />
 
-      {/* Kalau masih loading, tampilkan LoadingScreen, kalau udah selesai, tampilkan konten */}
+      {/* Konten Lokasi */}
       {loading ? (
         <LoadingScreen />
       ) : (
@@ -121,6 +108,8 @@ export default function App() {
           style={styles.scrollView}
           showsVerticalScrollIndicator={true}
           contentContainerStyle={styles.scrollViewContent}
+          bounces={false} 
+          overScrollMode="never" 
         >
           {locations.length > 0 ? (
             <View style={styles.gridContainer}>
@@ -131,7 +120,7 @@ export default function App() {
                   onPress={() => router.push(`../upt-detail/${location.id}`)}
                 >
                   <Image
-                    source={{ uri: location.imageUrl }}
+                    source={{ uri: location.image_url || "https://via.placeholder.com/150" }}
                     style={styles.cardImage}
                     defaultSource={require("../../assets/images/lokasi1.png")}
                   />
@@ -155,6 +144,7 @@ export default function App() {
           )}
         </ScrollView>
       )}
+
       <View style={styles.homeIndicator} />
     </SafeAreaView>
   );

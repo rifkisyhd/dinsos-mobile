@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet, Platform } from "react-native";
 
 
 export const styles = StyleSheet.create({
@@ -24,7 +24,8 @@ export const styles = StyleSheet.create({
     },
     backButton: {
       position: "absolute",
-      top: 16,
+      // top: 16,
+      top: Platform.OS === "ios" ? 16 : 34,
       left: 16,
       backgroundColor: "rgba(0,0,0,0.3)",
       width: 36,

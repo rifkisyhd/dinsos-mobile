@@ -84,7 +84,7 @@ export const styles = StyleSheet.create({
     flexWrap: "wrap",
     justifyContent: "space-between",
     backgroundColor: "#f5f5f5",
-    height: "300%",
+    height: "500%",
   },
   card: {
     width: "48%",
