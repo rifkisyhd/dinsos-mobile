@@ -37,7 +37,7 @@ export const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 3 },
     shadowRadius: 5,
     elevation: 5, // Untuk shadow di Android
-    width: 340, // Sesuaikan ukuran card
+    width: "100%", // Sesuaikan ukuran card
     alignSelf: "center",
     marginVertical: 10,
   },
