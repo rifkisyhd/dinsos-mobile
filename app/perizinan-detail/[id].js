@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity, StatusBar } from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabaseClient';
 import { styles } from './styles';
@@ -50,6 +50,8 @@ export default function DetailPerizinanScreen() {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      <StatusBar barStyle="dark-content" backgroundColor="#33A9FF" />
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
           <Text style={styles.backText}>←</Text>
@@ -59,7 +61,7 @@ export default function DetailPerizinanScreen() {
       {perizinan.image_url && (
         <Image source={{ uri: perizinan.image_url }} style={styles.image} />
       )}
-      {perizinan.subtitle && <Text style={styles.subtitle}>{perizinan.subtitle}</Text>}
+      {/* {perizinan.subtitle && <Text style={styles.subtitle}>{perizinan.subtitle}</Text>} */}
       {perizinan.description && <Text style={styles.description}>{perizinan.description}</Text>}
     </ScrollView>
   );
