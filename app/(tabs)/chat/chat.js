@@ -187,7 +187,8 @@ const formatMessagesForOpenAI = (messages) => {
 
                         Pahami makna pertanyaan pengguna. Lakukan pencocokan semantik — tidak harus kata-kata persis sama.
                         Jika Anda menemukan pertanyaan yang relevan dalam FAQ, jawab dengan jawaban dari FAQ.
-                        Jika tidak ada yang relevan, jawab sesuai dengan informasi yang ada di google untuk membantu kamu."
+                        Jika tidak ada yang relevan, jawab sesuai dengan informasi yang ada di google untuk membantu kamu.
+                        jawab pertanyaan dengan respon yang asik dan tidak kaku setelah menjawab faq respon dengan bertanya kembali apa yang bida dibantu"
 
                         FAQ:
 
