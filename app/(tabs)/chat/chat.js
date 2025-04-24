@@ -33,6 +33,8 @@ const fetchFileContent = async () => {
         .from("chat-jsc")
         .download(`faq.json?t=${Date.now()}`);
 
+        .download(`faq.json?t=${Date.now()}`);
+
 
     if (error || !data) {
         console.error("Gagal ambil file:", error?.message || "Data kosong");
@@ -60,7 +62,28 @@ const fetchFileContent = async () => {
 
             reader.readAsText(data);
         });
+        const reader = new FileReader();
+        return await new Promise((resolve, reject) => {
+            reader.onload = () => {
+                try {
+                    const json = JSON.parse(reader.result);
+                    const combinedText = json.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
+                    resolve(combinedText);
+                } catch (parseErr) {
+                    console.error("Gagal parsing isi file JSON:", parseErr.message);
+                    reject("");
+                }
+            };
+
+            reader.onerror = () => {
+                console.error("Gagal membaca file dengan FileReader");
+                reject("");
+            };
+
+            reader.readAsText(data);
+        });
     } catch (err) {
+        console.error("Error saat membaca dan parsing JSON:", err.message);
         console.error("Error saat membaca dan parsing JSON:", err.message);
         return "";
     }
@@ -71,6 +94,7 @@ const ChatAI = () => {
     const [messages, setMessages] = useState([
         {
             id: "1",
+            text: "Halo! Kawan Showsial. Ada yang bisa Cak J Bantu?",
             text: "Halo! Kawan Showsial. Ada yang bisa Cak J Bantu?",
             isUser: false,
         },
@@ -145,8 +169,16 @@ const formatMessagesForOpenAI = (messages) => {
     }));
   };
   
+const formatMessagesForOpenAI = (messages) => {
+    return messages.map((msg) => ({
+      role: msg.isUser ? "user" : "assistant",
+      content: msg.text,
+    }));
+  };
+  
     const sendMessage = async () => {
         if (inputText.trim() === "") return;
+    
     
         const userMessage = {
             id: Date.now().toString(),
@@ -154,11 +186,14 @@ const formatMessagesForOpenAI = (messages) => {
             isUser: true,
         };
     
+    
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInputText("");
     
+    
         scrollToBottom();
+    
     
         const typingMessage = {
             id: "typing-indicator",
@@ -168,12 +203,16 @@ const formatMessagesForOpenAI = (messages) => {
         };
         setMessages((prev) => [...prev, typingMessage]);
     
+    
         try {
             if (!apiKey) throw new Error("API key tidak tersedia.");
     
+    
             const formattedMessages = formatMessagesForOpenAI(updatedMessages);
     
+    
             const fileContent = await fetchFileContent();
+    
     
             const response = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
@@ -198,7 +237,9 @@ const formatMessagesForOpenAI = (messages) => {
                     ...formattedMessages,
                 ],
                 temperature: 0.3,
+                temperature: 0.3,
             });
+    
     
             const botResponse = {
                 id: Date.now().toString() + "-bot",
@@ -206,10 +247,12 @@ const formatMessagesForOpenAI = (messages) => {
                 isUser: false,
             };
     
+    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 botResponse,
             ]);
+    
     
             scrollToBottom();
         } catch (error) {
@@ -221,11 +264,13 @@ const formatMessagesForOpenAI = (messages) => {
                 isError: true,
             };
     
+    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 errorMessage,
             ]);
         }
+    };    
     };    
 
     const dismissKeyboard = () => Keyboard.dismiss();

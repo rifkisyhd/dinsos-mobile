@@ -1,77 +1,76 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
-  View,
-  Text,
-  StyleSheet,
-  Image,
-  TouchableOpacity,
-  SafeAreaView,
+    View,
+    Text,
+    Image,
+    TouchableOpacity,
+    SafeAreaView,
+    ScrollView,
 } from "react-native";
-import { Link, useRouter } from "expo-router";
+import { useRouter } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { styles } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
+import LoadingScreen from "../components/LoadingScreen";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function ProgramScreen() {
-  const router = useRouter();
+    const router = useRouter();
+    const [programs, setPrograms] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-  const programData = [
-    {
-      programs: [
-        {
-          id: 1,
-          name: "E-RANTANG BASKOM",
-          icon: require("../../assets/images/e-rantang.png"),
-        },
-        {
-          id: 2,
-          name: "Sabi Bisa!",
-          icon: require("../../assets/images/sabi-bisa.png"),
-        },
-        {
-          id: 3,
-          name: "Jelita Manis",
-          icon: require("../../assets/images/jelita-manis.png"),
-        },
-      ],
-    },
-  ];
+    useEffect(() => {
+        const fetchPrograms = async () => {
+            const { data, error } = await supabase
+                .from("tb_program")
+                .select("*");
+            if (error) {
+                console.error("Error fetching data:", error.message);
+            } else if (Array.isArray(data)) {
+                setPrograms(data);
+            }
+            setLoading(false);
+        };
 
-  return (
-    <SafeAreaView style={styles.container}>
-      <StatusBar style="light" />
+        fetchPrograms();
+    }, []);
 
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => router.back()}
-          style={styles.backButton}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Program</Text>
-      </View>
+    return (
+        <SafeAreaView style={styles.container}>
+            <StatusBar style="light" />
 
-      {programData.map((section, index) => (
-        <View key={index} style={styles.sectionContainer}>
-          <View style={styles.programCard}>
-            <View style={styles.programsContainer}>
-              {section.programs.map((program) => (
+            <View style={styles.header}>
                 <TouchableOpacity
-                  key={program.id}
-                  style={styles.programItem}
-                  onPress={() => router.push(`/program/${program.id}`)}
-                >
-                  <View style={styles.iconContainer}>
-                    <Image source={program.icon} style={styles.icon} />
-                  </View>
-                  <Text style={styles.programName}>{program.name}</Text>
+                    onPress={() => router.back()}
+                    style={styles.backButton}>
+                    <Ionicons name="arrow-back" size={24} color="white" />
                 </TouchableOpacity>
-              ))}
+                <Text style={styles.headerTitle}>Program</Text>
             </View>
-          </View>
-        </View>
-      ))}
-        <View style={styles.homeIndicator} />
-    </SafeAreaView>
-  );
+
+            {/* Bungkus list pakai ScrollView biar bisa scroll jika banyak */}
+            <ScrollView contentContainerStyle={styles.content}>
+                {loading ? (
+                    <LoadingScreen />
+                ) : (
+                    programs.map((program) => (
+                        <TouchableOpacity
+                            key={program.id}
+                            style={styles.programCard}
+                            onPress={() =>
+                                router.push(`/bidang/${program.id}`)
+                            }>
+                            <Image
+                                source={{ uri: program.image_url }}
+                                style={styles.icon}
+                            />
+                            <Text style={styles.programName}>
+                                {program.title}
+                            </Text>
+                        </TouchableOpacity>
+                    ))
+                )}
+            </ScrollView>
+        </SafeAreaView>
+    );
 }
