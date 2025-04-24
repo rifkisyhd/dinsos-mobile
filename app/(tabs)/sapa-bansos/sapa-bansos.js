@@ -34,6 +34,10 @@ const DataTable = () => {
     const [periodes, setPeriodes] = useState(["all"]);
     const [selectedPeriode, setSelectedPeriode] = useState("all");
 
+    // State untuk sorting
+    const [sortField, setSortField] = useState(null);
+    const [sortDirection, setSortDirection] = useState('asc');
+
     // Fungsi untuk mengambil data dari API
     const fetchData = async () => {
         setLoading(true);
@@ -110,22 +114,50 @@ const DataTable = () => {
         fetchData();
     }, [selectedEndpoint, selectedProgram]);
 
-    // Filter data berdasarkan kabupaten dan periode yang dipilih
+    // Filter dan sort data
     useEffect(() => {
         let result = [...data];
 
+        // Filter berdasarkan kabupaten
         if (selectedKabupaten !== "all") {
             result = result.filter(
                 (item) => item.kabupaten === selectedKabupaten,
             );
         }
 
+        // Filter berdasarkan periode
         if (selectedPeriode !== "all") {
             result = result.filter((item) => item.periode === selectedPeriode);
         }
 
+        // Sort data jika sortField ada
+        if (sortField) {
+            result.sort((a, b) => {
+                let valueA = a[sortField];
+                let valueB = b[sortField];
+                
+                // Konversi ke number jika nilai berupa angka
+                if (sortField === 'dana' || sortField === 'sp2d' || sortField === 'tersalur') {
+                    valueA = parseFloat(valueA) || 0;
+                    valueB = parseFloat(valueB) || 0;
+                }
+                
+                // String comparison untuk text
+                if (typeof valueA === 'string' && typeof valueB === 'string') {
+                    return sortDirection === 'asc' 
+                        ? valueA.localeCompare(valueB) 
+                        : valueB.localeCompare(valueA);
+                }
+                
+                // Number comparison
+                return sortDirection === 'asc' 
+                    ? valueA - valueB 
+                    : valueB - valueA;
+            });
+        }
+
         setFilteredData(result);
-    }, [selectedKabupaten, selectedPeriode, data]);
+    }, [selectedKabupaten, selectedPeriode, data, sortField, sortDirection]);
 
     // Format angka rupiah
     const formatRupiah = (amount) => {
@@ -134,6 +166,18 @@ const DataTable = () => {
             currency: "IDR",
             minimumFractionDigits: 0,
         }).format(amount);
+    };
+
+    // Fungsi untuk menangani sorting
+    const handleSort = (field) => {
+        // Jika mengklik field yang sama, ubah arah sorting
+        if (sortField === field) {
+            setSortDirection(sortDirection === 'asc' ? 'desc' : 'asc');
+        } else {
+            // Jika field baru, set ke ascending
+            setSortField(field);
+            setSortDirection('asc');
+        }
     };
 
     // Render item di dalam FlatList
@@ -146,6 +190,14 @@ const DataTable = () => {
             <Text style={styles.cellPeriode}>{item.periode}</Text>
         </View>
     );
+
+    // Fungsi untuk render arrow sorting indikator
+    const renderSortIndicator = (field) => {
+        if (sortField === field) {
+            return <Text style={styles.sortIndicator}>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</Text>;
+        }
+        return null;
+    };
 
     return (
         <View style={styles.container}>
@@ -232,23 +284,52 @@ const DataTable = () => {
                 <Text style={styles.refreshButtonText}>Refresh Data</Text>
             </TouchableOpacity>
 
-            {/* Header tabel */}
+            {/* Header tabel with sorting */}
             <View style={[styles.row, styles.header]}>
-                <Text style={[styles.cellKabupaten, styles.headerText]}>
-                    Kabupaten
-                </Text>
-                <Text style={[styles.cellNumeric, styles.headerText]}>
-                    SP2D
-                </Text>
-                <Text style={[styles.cellNumeric, styles.headerText]}>
-                    Dana
-                </Text>
-                <Text style={[styles.cellNumeric, styles.headerText]}>
-                    Tersalur
-                </Text>
-                <Text style={[styles.cellPeriode, styles.headerText]}>
-                    Periode
-                </Text>
+                <TouchableOpacity  
+                    style={[styles.cellKabupaten, styles.headerCell]} 
+                    onPress={() => handleSort('kabupaten')}>
+                    <Text style={styles.headerText}>
+                        Kabupaten
+                        {renderSortIndicator('kabupaten')}
+                    </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                    style={[styles.cellNumeric, styles.headerCell]} 
+                    onPress={() => handleSort('sp2d')}>
+                    <Text style={styles.headerText}>
+                        SP2D
+                        {renderSortIndicator('sp2d')}
+                    </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                    style={[styles.cellNumeric, styles.headerCell]} 
+                    onPress={() => handleSort('dana')}>
+                    <Text style={styles.headerText}>
+                        Dana
+                        {renderSortIndicator('dana')}
+                    </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                    style={[styles.cellNumeric, styles.headerCell]} 
+                    onPress={() => handleSort('tersalur')}>
+                    <Text style={styles.headerText}>
+                        Tersalur
+                        {renderSortIndicator('tersalur')}
+                    </Text>
+                </TouchableOpacity>
+                
+                <TouchableOpacity 
+                    style={[styles.cellPeriode, styles.headerCell]} 
+                    onPress={() => handleSort('periode')}>
+                    <Text style={styles.headerText}>
+                        Periode
+                        {renderSortIndicator('periode')}
+                    </Text>
+                </TouchableOpacity>
             </View>
 
             {/* Loading indicator */}
