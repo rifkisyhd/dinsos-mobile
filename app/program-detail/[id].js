@@ -4,6 +4,7 @@ import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabaseClient";
 import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
+import Header from "../components/Header";
 
 export default function ProgramDetailScreen() {
     const { id } = useLocalSearchParams();
@@ -17,8 +18,9 @@ export default function ProgramDetailScreen() {
         (async () => {
             try {
                 const { data, error } = await supabase
-                .from("tb_bidang_detail")
-                .select(`
+                    .from("tb_bidang_detail")
+                    .select(
+                        `
                     id,
                     description,
                     bidang_id,
@@ -26,9 +28,10 @@ export default function ProgramDetailScreen() {
                       id,
                       description
                     )
-                  `)
-                .eq("id", Number(id))
-                .maybeSingle();
+                  `,
+                    )
+                    .eq("id", Number(id))
+                    .maybeSingle();
 
                 if (error) throw error;
                 console.log("DATA:", data);
@@ -60,20 +63,16 @@ export default function ProgramDetailScreen() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}>
-                    <Text style={styles.backText}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.title}>
-                    {bidangDetail.tb_bidang.description || "Nama Bidang"}
+            <Header
+                title={bidangDetail?.tb_bidang?.description || "Nama Bidang"}
+                backgroundColor="#33A9FF"
+                textColor="white"
+            />
+            <View style={styles.content}>
+                <Text style={styles.description}>
+                    {bidangDetail.description || "Tidak ada deskripsi detail."}
                 </Text>
             </View>
-
-            <Text style={styles.description}>
-                {bidangDetail.description || "Tidak ada deskripsi detail."}
-            </Text>
         </ScrollView>
     );
 }

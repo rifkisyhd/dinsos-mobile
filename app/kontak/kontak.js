@@ -13,6 +13,7 @@ import { useRouter } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import { Ionicons, FontAwesome, MaterialIcons } from '@expo/vector-icons';
 import { styles } from './styles';
+import Header from '../components/Header';
 
 const ContactScreen = () => {
   const router = useRouter();
@@ -59,12 +60,7 @@ const ContactScreen = () => {
     <SafeAreaView style={styles.container}>
       <StatusBar style="light" />
       
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerText}>Kontak</Text>
-      </View>
+        <Header title="Kontak" backgroundColor="#39b4ff" textColor="white" />
 
       <View style={styles.contactCard}>
         <View style={styles.contactHeaderContainer}>

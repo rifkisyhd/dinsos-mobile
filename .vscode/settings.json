@@ -10,5 +10,8 @@
     "editor.tokenColorCustomizations": {
         "comments": "",
         "textMateRules": []
-    }
+    },
+    "editor.fontSize": 14,
+    "terminal.integrated.fontFamily": "",
+    "terminal.integrated.fontSize": 11
 }

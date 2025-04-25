@@ -12,6 +12,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { useRouter } from "expo-router";
 import LoadingScreen from "../components/LoadingScreen";
+import Header from "../components/Header";
 import { supabase } from "../../lib/supabaseClient";
 
 export default function LayananScreen() {
@@ -44,14 +45,7 @@ export default function LayananScreen() {
             <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
 
             {/* Header tetap tampil */}
-            <View style={styles.header}>
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => router.back()}>
-                    <Ionicons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Layanan</Text>
-            </View>
+         <Header title="Layanan" backgroundColor="#33A9FF" textColor="white" />
 
             {/* Jika sedang loading, tampilkan LoadingScreen */}
             {loading ? (

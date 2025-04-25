@@ -15,6 +15,7 @@ import { useRouter } from "expo-router";
 import styles from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
 import { supabase } from "../../lib/supabaseClient";
+import Header from "../components/Header";
 
 const InnovationScreen = () => {
     const router = useRouter();
@@ -71,7 +72,7 @@ const InnovationScreen = () => {
             />
 
             {/* Header tetap tampil selama loading */}
-            <View style={styles.header}>
+            {/* <View style={styles.header}>
                 <TouchableOpacity
                     style={styles.backButton}
                     onPress={() => router.back()}
@@ -79,7 +80,8 @@ const InnovationScreen = () => {
                     <Ionicons name="arrow-back" size={24} color="#333" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Inovasi</Text>
-            </View>
+            </View> */}
+            <Header title="Inovasi" backgroundColor="#d4e5ef" textColor="black" />
 
             {/* Jika loading, tampilkan LoadingScreen */}
             {loading ? (

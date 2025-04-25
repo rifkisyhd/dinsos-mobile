@@ -11,6 +11,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { styles } from "./styles";
 import { router } from "expo-router";
+import Header from "../components/Header";
 
 const PengaduanScreen = () => {
   const openWebsite = () => {
@@ -34,15 +35,7 @@ const PengaduanScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Pengaduan</Text>
-      </View>
+      <Header title="Pengaduan" backgroundColor="#5b8ba6" textColor="white" />
 
       {/* Content */}
       <ScrollView style={styles.scrollView}>

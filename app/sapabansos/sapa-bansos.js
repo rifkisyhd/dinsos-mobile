@@ -39,7 +39,8 @@ const DataTable = () => {
 
         try {
             const networkState = await NetInfo.fetch();
-            if (!networkState.isConnected) throw new Error("Tidak ada koneksi internet.");
+            if (!networkState.isConnected)
+                throw new Error("Tidak ada koneksi internet.");
 
             const apiUrl = `${API_BASE_URL}/api/${selectedEndpoint}/${selectedProgram}`;
             const res = await fetch(apiUrl, {
@@ -57,8 +58,14 @@ const DataTable = () => {
             if (json?.data && Array.isArray(json.data)) {
                 setData(json.data);
                 setFilteredData(json.data);
-                setKabupatens(["all", ...new Set(json.data.map((i) => i.kabupaten))]);
-                setPeriodes(["all", ...new Set(json.data.map((i) => i.periode))]);
+                setKabupatens([
+                    "all",
+                    ...new Set(json.data.map((i) => i.kabupaten)),
+                ]);
+                setPeriodes([
+                    "all",
+                    ...new Set(json.data.map((i) => i.periode)),
+                ]);
             } else {
                 throw new Error("Format data tidak sesuai");
             }
@@ -92,7 +99,9 @@ const DataTable = () => {
                     valB = parseFloat(valB) || 0;
                 }
                 if (typeof valA === "string") {
-                    return sortDirection === "asc" ? valA.localeCompare(valB) : valB.localeCompare(valA);
+                    return sortDirection === "asc"
+                        ? valA.localeCompare(valB)
+                        : valB.localeCompare(valA);
                 }
                 return sortDirection === "asc" ? valA - valB : valB - valA;
             });
@@ -120,7 +129,11 @@ const DataTable = () => {
 
     const renderSortIndicator = (field) => {
         if (sortField === field) {
-            return <Text style={styles.sortIndicator}>{sortDirection === "asc" ? " ▲" : " ▼"}</Text>;
+            return (
+                <Text style={styles.sortIndicator}>
+                    {sortDirection === "asc" ? " ▲" : " ▼"}
+                </Text>
+            );
         }
         return null;
     };
@@ -137,25 +150,39 @@ const DataTable = () => {
 
     return (
         <View style={{ flex: 1 }}>
-            <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+            <StatusBar
+                barStyle="dark-content"
+                translucent
+                backgroundColor="transparent"
+            />
             <FlatList
                 data={filteredData}
                 renderItem={renderItem}
-                keyExtractor={(item, index) => `${item.kabupaten}-${item.periode}-${index}`}
+                keyExtractor={(item, index) =>
+                    `${item.kabupaten}-${item.periode}-${index}`
+                }
                 initialNumToRender={10}
                 ListHeaderComponent={
                     <>
-                        <Text style={styles.title}>
-                            Data SapaBansos {selectedProgram.toUpperCase()}
-                        </Text>
+                        <Header
+                            title={`Data SapaBansos ${selectedProgram.toUpperCase()}`}
+                            backgroundColor="#33A9FF"
+                            textColor="white"
+                            centerTitle={true}
+                        />
 
                         <View style={styles.filterRow}>
                             <Text style={styles.filterLabel}>Jenis Data:</Text>
                             <Picker
                                 selectedValue={selectedEndpoint}
-                                onValueChange={(value) => setSelectedEndpoint(value)}
+                                onValueChange={(value) =>
+                                    setSelectedEndpoint(value)
+                                }
                                 style={styles.picker}>
-                                <Picker.Item label="Rekapitulasi" value="rekapitulasi" />
+                                <Picker.Item
+                                    label="Rekapitulasi"
+                                    value="rekapitulasi"
+                                />
                                 <Picker.Item label="BNBA" value="bnba" />
                             </Picker>
                         </View>
@@ -164,7 +191,9 @@ const DataTable = () => {
                             <Text style={styles.filterLabel}>Program:</Text>
                             <Picker
                                 selectedValue={selectedProgram}
-                                onValueChange={(value) => setSelectedProgram(value)}
+                                onValueChange={(value) =>
+                                    setSelectedProgram(value)
+                                }
                                 style={styles.picker}>
                                 {PROGRAM_LIST.map((program) => (
                                     <Picker.Item
@@ -180,11 +209,17 @@ const DataTable = () => {
                             <Text style={styles.filterLabel}>Kabupaten:</Text>
                             <Picker
                                 selectedValue={selectedKabupaten}
-                                onValueChange={(value) => setSelectedKabupaten(value)}
+                                onValueChange={(value) =>
+                                    setSelectedKabupaten(value)
+                                }
                                 style={styles.picker}>
                                 {kabupatens.map((kabupaten) => (
                                     <Picker.Item
-                                        label={kabupaten === "all" ? "Semua Kabupaten" : kabupaten}
+                                        label={
+                                            kabupaten === "all"
+                                                ? "Semua Kabupaten"
+                                                : kabupaten
+                                        }
                                         value={kabupaten}
                                         key={kabupaten}
                                     />
@@ -196,11 +231,17 @@ const DataTable = () => {
                             <Text style={styles.filterLabel}>Periode:</Text>
                             <Picker
                                 selectedValue={selectedPeriode}
-                                onValueChange={(value) => setSelectedPeriode(value)}
+                                onValueChange={(value) =>
+                                    setSelectedPeriode(value)
+                                }
                                 style={styles.picker}>
                                 {periodes.map((periode) => (
                                     <Picker.Item
-                                        label={periode === "all" ? "Semua Periode" : periode}
+                                        label={
+                                            periode === "all"
+                                                ? "Semua Periode"
+                                                : periode
+                                        }
                                         value={periode}
                                         key={periode}
                                     />
@@ -208,25 +249,52 @@ const DataTable = () => {
                             </Picker>
                         </View>
 
-                        <TouchableOpacity style={styles.refreshButton} onPress={fetchData}>
-                            <Text style={styles.refreshButtonText}>Refresh Data</Text>
+                        <TouchableOpacity
+                            style={styles.refreshButton}
+                            onPress={fetchData}>
+                            <Text style={styles.refreshButtonText}>
+                                Refresh Data
+                            </Text>
                         </TouchableOpacity>
 
                         <View style={[styles.row, styles.header]}>
-                            <TouchableOpacity style={[styles.cellKabupaten, styles.headerCell]} onPress={() => handleSort("kabupaten")}>
-                                <Text style={styles.headerText}>Kabupaten{renderSortIndicator("kabupaten")}</Text>
+                            <TouchableOpacity
+                                style={[
+                                    styles.cellKabupaten,
+                                    styles.headerCell,
+                                ]}
+                                onPress={() => handleSort("kabupaten")}>
+                                <Text style={styles.headerText}>
+                                    Kabupaten{renderSortIndicator("kabupaten")}
+                                </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.cellNumeric, styles.headerCell]} onPress={() => handleSort("sp2d")}>
-                                <Text style={styles.headerText}>SP2D{renderSortIndicator("sp2d")}</Text>
+                            <TouchableOpacity
+                                style={[styles.cellNumeric, styles.headerCell]}
+                                onPress={() => handleSort("sp2d")}>
+                                <Text style={styles.headerText}>
+                                    SP2D{renderSortIndicator("sp2d")}
+                                </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.cellNumeric, styles.headerCell]} onPress={() => handleSort("dana")}>
-                                <Text style={styles.headerText}>Dana{renderSortIndicator("dana")}</Text>
+                            <TouchableOpacity
+                                style={[styles.cellNumeric, styles.headerCell]}
+                                onPress={() => handleSort("dana")}>
+                                <Text style={styles.headerText}>
+                                    Dana{renderSortIndicator("dana")}
+                                </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.cellNumeric, styles.headerCell]} onPress={() => handleSort("tersalur")}>
-                                <Text style={styles.headerText}>Tersalur{renderSortIndicator("tersalur")}</Text>
+                            <TouchableOpacity
+                                style={[styles.cellNumeric, styles.headerCell]}
+                                onPress={() => handleSort("tersalur")}>
+                                <Text style={styles.headerText}>
+                                    Tersalur{renderSortIndicator("tersalur")}
+                                </Text>
                             </TouchableOpacity>
-                            <TouchableOpacity style={[styles.cellPeriode, styles.headerCell]} onPress={() => handleSort("periode")}>
-                                <Text style={styles.headerText}>Periode{renderSortIndicator("periode")}</Text>
+                            <TouchableOpacity
+                                style={[styles.cellPeriode, styles.headerCell]}
+                                onPress={() => handleSort("periode")}>
+                                <Text style={styles.headerText}>
+                                    Periode{renderSortIndicator("periode")}
+                                </Text>
                             </TouchableOpacity>
                         </View>
                     </>
@@ -235,18 +303,24 @@ const DataTable = () => {
                     loading ? (
                         <View style={styles.loadingContainer}>
                             <ActivityIndicator size="large" color="#33A9FF" />
-                            <Text style={styles.loadingText}>Memuat data...</Text>
+                            <Text style={styles.loadingText}>
+                                Memuat data...
+                            </Text>
                         </View>
                     ) : error ? (
                         <View style={styles.errorContainer}>
                             <Text style={styles.errorText}>{error}</Text>
-                            <TouchableOpacity style={styles.retryButton} onPress={fetchData}>
+                            <TouchableOpacity
+                                style={styles.retryButton}
+                                onPress={fetchData}>
                                 <Text style={styles.retryText}>Coba Lagi</Text>
                             </TouchableOpacity>
                         </View>
                     ) : (
                         <View style={styles.noDataContainer}>
-                            <Text style={styles.noDataText}>Tidak ada data yang tersedia</Text>
+                            <Text style={styles.noDataText}>
+                                Tidak ada data yang tersedia
+                            </Text>
                         </View>
                     )
                 }

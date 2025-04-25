@@ -7,11 +7,14 @@ import {
     ScrollView,
     ActivityIndicator,
     TouchableOpacity,
+    StatusBar,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabaseClient";
 import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
+import { Ionicons } from "@expo/vector-icons";
+import Header from "../components/Header";
 
 export default function BidangScreen() {
     const { id } = useLocalSearchParams();
@@ -73,35 +76,34 @@ export default function BidangScreen() {
 
     return (
         <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}>
-                    <Text style={styles.backText}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.title}>{program.title}</Text>
-            </View>
+              <Header
+                            title={program.title}
+                            backgroundColor="#33A9FF"
+                            textColor="white"
+                        />
 
-            {/* Bidang Terkait */}
-            {program.tb_bidang?.length > 0 && (
-                <View style={styles.relatedContainer}>
-                    <Text style={styles.subtitle}>Bidang Terkait:</Text>
-                    {program.tb_bidang.map((bidang, index) =>
-                        bidang.tb_bidang_detail?.map((detail, i) => (
-                            <TouchableOpacity
-                                key={index}
-                                style={styles.card}
-                                onPress={() =>
-                                    router.push(`/program-detail/${detail.id}`)
-                                }>
-                                <Text style={styles.cardText}>
-                                    {bidang.description}
-                                </Text>
-                            </TouchableOpacity>
-                        )),
-                    )}
-                </View>
-            )}
+                {/* Bidang Terkait */}
+                {program.tb_bidang?.length > 0 && (
+                    <View style={styles.relatedContainer}>
+                        <Text style={styles.subtitle}>Bidang Terkait:</Text>
+                        {program.tb_bidang.map((bidang, index) =>
+                            bidang.tb_bidang_detail?.map((detail, i) => (
+                                <TouchableOpacity
+                                    key={index}
+                                    style={styles.card}
+                                    onPress={() =>
+                                        router.push(
+                                            `/program-detail/${detail.id}`,
+                                        )
+                                    }>
+                                    <Text style={styles.cardText}>
+                                        {bidang.description}
+                                    </Text>
+                                </TouchableOpacity>
+                            )),
+                        )}
+                    </View>
+                )}
         </ScrollView>
     );
 }

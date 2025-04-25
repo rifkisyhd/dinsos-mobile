@@ -15,6 +15,7 @@ import { styles } from './styles';
 import { useRouter } from 'expo-router';
 import { supabase } from '../../lib/supabaseClient';
 import LoadingScreen from '../components/LoadingScreen';
+import Header from '../components/Header';
 
 export default function AplicationList() {
   const router = useRouter();
@@ -47,54 +48,47 @@ export default function AplicationList() {
     fetchaplication();
   }, []);
 
-  if (loading) return <LoadingScreen />;
-
-  if (error) {
-    return (
-      <SafeAreaView style={styles.container}>
-        <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
-      </SafeAreaView>
-    );
-  }
-
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar barStyle="dark-content" translucent backgroundColor="transparent" />
+      <StatusBar barStyle="light-content" translucent backgroundColor="transparent" />
 
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity style={styles.backButton} onPress={() => router.back()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Aplikasi</Text>
-      </View>
+      {/* Header selalu tampil */}
+      <Header title="Aplikasi" backgroundColor="#33A9FF" textColor="white" />
 
-      {/* Content */}
-      <ScrollView style={styles.scrollView}>
-        <View style={styles.gridContainer}>
-          {Aplicationitems.map((item) => (
-            <TouchableOpacity
-              key={item.id}
-              style={styles.card}
-              onPress={() => item.onclicklink && Linking.openURL(item.onclicklink)}
-            >
-              <View style={styles.cardContent}>
-                <View style={styles.iconContainer}>
-                  <Image
-                    source={{ uri: item.image_url }}
-                    style={styles.cardImage}
-                    resizeMode="contain"
-                    onError={(e) =>
-                      console.log("Image load error:", e.nativeEvent.error)
-                    }
-                  />
+      {/* Loading state */}
+      {loading ? (
+        <LoadingScreen />
+      ) : error ? (
+        <Text style={{ color: 'red', textAlign: 'center' }}>{error}</Text>
+      ) : (
+        <ScrollView style={styles.scrollView}>
+          <View style={styles.gridContainer}>
+            {Aplicationitems.map((item) => (
+              <TouchableOpacity
+                key={item.id}
+                style={styles.card}
+                onPress={() =>
+                  item.onclicklink && Linking.openURL(item.onclicklink)
+                }
+              >
+                <View style={styles.cardContent}>
+                  <View style={styles.iconContainer}>
+                    <Image
+                      source={{ uri: item.image_url }}
+                      style={styles.cardImage}
+                      resizeMode="contain"
+                      onError={(e) =>
+                        console.log("Image load error:", e.nativeEvent.error)
+                      }
+                    />
+                  </View>
+                  <Text style={styles.cardTitle}>{item.title}</Text>
                 </View>
-                <Text style={styles.cardTitle}>{item.title}</Text>
-              </View>
-            </TouchableOpacity>
-          ))}
-        </View>
-      </ScrollView>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

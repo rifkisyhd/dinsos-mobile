@@ -5,22 +5,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#39b4ff",
   },
-  header: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    marginBottom: 20,
-    marginTop: Platform.OS === "ios" ? 0 : 36,
-  },
-  backButton: {
-    marginRight: 16,
-  },
-  headerTitle: {
-    fontSize: 18,
-    fontWeight: "bold",
-    color: "white",
-  },
   sectionContainer: {
     marginTop: 16,
     paddingHorizontal: 16,

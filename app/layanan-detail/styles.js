@@ -2,23 +2,11 @@ import { StyleSheet } from 'react-native';
 
 export const styles = StyleSheet.create({
   container: {
-    padding: 20,
     backgroundColor: '#fff',
     flexGrow: 1,
-    paddingTop: 50,
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 20,
-  },
-  backButton: {
-    marginRight: 10,
-    padding: 5,
-  },
-  backText: {
-    fontSize: 24,
-    color: '#33A9FF',
+  content: {
+paddingHorizontal: 20,
   },
   title: {
     fontSize: 22,

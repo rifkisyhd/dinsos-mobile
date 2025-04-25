@@ -14,6 +14,7 @@ import { useRouter } from "expo-router";
 import { supabase } from "../../lib/supabaseClient"; // Ganti dengan path sesuai struktur folder kamu
 import LoadingScreen from "../components/LoadingScreen";
 import Dropdown from "./components/Dropdown";
+import Header from "../components/Header";
 
 
 export default function App() {
@@ -79,18 +80,10 @@ export default function App() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar style="light" backgroundColor="#3498db" />
+      <StatusBar style="light" backgroundColor="#33A9FF" />
 
       {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>UPT</Text>
-      </View>
+       <Header title="UPT (Unit Pelayanan Tugas)" backgroundColor="#33A9FF" textColor="white" />
 
       {/* Dropdown Kategori */}
       <Dropdown

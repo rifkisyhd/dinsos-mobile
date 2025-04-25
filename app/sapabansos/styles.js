@@ -67,14 +67,6 @@ export const styles = StyleSheet.create({
         fontSize: 10,
         paddingHorizontal: 5,
     },
-    header: {
-        backgroundColor: "#33A9FF",
-        paddingVertical: 12,
-    },
-    headerText: {
-        color: "#fff",
-        fontWeight: "bold",
-    },
     loadingContainer: {
         flex: 1,
         justifyContent: "center",

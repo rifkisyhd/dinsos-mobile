@@ -14,6 +14,8 @@ import { useRouter } from "expo-router";
 import { styles } from "./styles";
 import { supabase } from "../../lib/supabaseClient"; // pastikan path ini sesuai struktur project kamu
 import LoadingScreen from "../components/LoadingScreen";
+import Header from "../components/Header";
+
 
 
 export default function PerizinanScreen() {
@@ -42,15 +44,7 @@ export default function PerizinanScreen() {
       <StatusBar barStyle="light-content" backgroundColor="#33A9FF" />
 
       {/* Header tetap tampil */}
-      <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <Ionicons name="arrow-back" size={24} color="white" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Perizinan</Text>
-      </View>
+       <Header title="Perizinan" backgroundColor="#33A9FF" textColor="white" />
 
       {/* Jika loading, tampilkan ActivityIndicator */}
       {loading ? (

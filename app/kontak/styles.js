@@ -5,25 +5,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#39b4ff', // Solid blue background
   },
-  header: {
-    // height: 60,
-    // backgroundColor: '#0084ff',
-     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 10,
-    
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    paddingVertical: Platform.OS === "ios" ? 20 : 25,
-
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  headerText: {
-    color: 'white',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
   contactCard: {
     backgroundColor: '#2980b9', // Darker blue card
     marginHorizontal: 16,
