@@ -81,6 +81,7 @@ export default function DetailPerizinanScreen() {
                     <StyledDescription
                         description={perizinan.description}
                         style={styles.description}
+                        boldColor={"#33A9FF"}
                     />
                 )}
             </View>

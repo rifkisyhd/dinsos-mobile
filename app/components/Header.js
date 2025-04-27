@@ -38,20 +38,24 @@ export default function Header({
                     <Ionicons name="arrow-back" size={24} color={textColor} />
                 </TouchableOpacity>
             )}
-            <Text
-                style={[
-                    styles.headerTitle,
-                    { color: textColor },
-                    centerTitle && {
-                        position: "absolute",
-                        left: 0,
-                        right: 0,
-                        textAlign: "center",
-                    },
-                    !centerTitle && { marginLeft: showBack ? 0 : 0 }, // jaga spacing
-                ]}>
-                {title}
-            </Text>
+
+            <View style={{ flex: 1 }}>
+                <Text
+                    style={[
+                        styles.headerTitle,
+                        { color: textColor },
+                        centerTitle && {
+                            position: "absolute",
+                            left: 0,
+                            right: 0,
+                            textAlign: "center",
+                        },
+                    ]}
+                    numberOfLines={1}
+                    ellipsizeMode="tail">
+                    {title}
+                </Text>
+            </View>
         </View>
     );
 }

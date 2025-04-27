@@ -79,7 +79,7 @@ export default function DetailLayananScreen() {
                     <Text style={styles.subtitle}>{layanan.subtitle}</Text>
                 )}
                 {layanan.description && (
-                    <StyledDescription description={layanan.description} />
+                    <StyledDescription description={layanan.description} boldColor={"#33A9FF"} />
                 )}
             </View>
         </ScrollView>
