@@ -19,20 +19,17 @@ export const styles = StyleSheet.create({
         marginBottom: 8,
     },
     filterLabel: {
-        width: 80,
+        width: 90,
         fontSize: 14,
         fontWeight: "bold",
     },
     picker: {
         flex: 1,
-        height: 50,
+        height: 40,
         backgroundColor: "#f0f0f0",
         color: "#000",
-        // backgroundColor: "red", // biar kelihatan
-        // color: "green", // teks jadi hitam
-        // height: 50,
-        // borderRadius: 8,
-        // marginBottom: 10,
+        height: 50,
+        borderRadius: 6,
     },
     refreshButton: {
         backgroundColor: "#33A9FF",
@@ -51,6 +48,13 @@ export const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: "#ddd",
     },
+    // Default cell untuk kolom apa saja
+    cellDefault: {
+        flex: 1,
+        fontSize: 14,
+        paddingHorizontal: 5,
+    },
+    // Kolom untuk data agregasi (ASPD, BLT, dll)
     cellKabupaten: {
         flex: 2,
         fontSize: 14,
@@ -67,6 +71,23 @@ export const styles = StyleSheet.create({
         fontSize: 10,
         paddingHorizontal: 5,
     },
+    // Kolom untuk data beneficiary (PKH+, dll)
+    cellNama: {
+        flex: 2,
+        fontSize: 14,
+        paddingHorizontal: 5,
+    },
+    cellNik: {
+        flex: 2,
+        fontSize: 12,
+        paddingHorizontal: 5,
+        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+    },
+    cellLocation: {
+        flex: 1,
+        fontSize: 12,
+        paddingHorizontal: 5,
+    },
     header: {
         backgroundColor: "#33A9FF",
         paddingVertical: 12,
@@ -74,6 +95,7 @@ export const styles = StyleSheet.create({
     headerText: {
         color: "#fff",
         fontWeight: "bold",
+        fontSize: 12,
     },
     loadingContainer: {
         flex: 1,
