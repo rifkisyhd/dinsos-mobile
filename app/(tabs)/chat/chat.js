@@ -29,62 +29,21 @@ const apiKey =
 const openai = new OpenAI({ apiKey });
 
 const fetchFileContent = async () => {
-    const { data, error } = await supabase.storage
-        .from("chat-jsc")
-        .download(`faq.json?t=${Date.now()}`);
-
-        .download(`faq.json?t=${Date.now()}`);
-
+    const { data, error } = await supabase
+        .from('faqs') 
+        .select('question, answer, category')
+        .eq('is_active', true);
 
     if (error || !data) {
-        console.error("Gagal ambil file:", error?.message || "Data kosong");
+        console.error("Gagal mengambil data FAQ:", error?.message || "Data kosong");
         return "";
     }
 
     try {
-        const reader = new FileReader();
-        return await new Promise((resolve, reject) => {
-            reader.onload = () => {
-                try {
-                    const json = JSON.parse(reader.result);
-                    const combinedText = json.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
-                    resolve(combinedText);
-                } catch (parseErr) {
-                    console.error("Gagal parsing isi file JSON:", parseErr.message);
-                    reject("");
-                }
-            };
-
-            reader.onerror = () => {
-                console.error("Gagal membaca file dengan FileReader");
-                reject("");
-            };
-
-            reader.readAsText(data);
-        });
-        const reader = new FileReader();
-        return await new Promise((resolve, reject) => {
-            reader.onload = () => {
-                try {
-                    const json = JSON.parse(reader.result);
-                    const combinedText = json.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
-                    resolve(combinedText);
-                } catch (parseErr) {
-                    console.error("Gagal parsing isi file JSON:", parseErr.message);
-                    reject("");
-                }
-            };
-
-            reader.onerror = () => {
-                console.error("Gagal membaca file dengan FileReader");
-                reject("");
-            };
-
-            reader.readAsText(data);
-        });
+        const combinedText = data.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
+        return combinedText;
     } catch (err) {
-        console.error("Error saat membaca dan parsing JSON:", err.message);
-        console.error("Error saat membaca dan parsing JSON:", err.message);
+        console.error("Error saat memproses data FAQ:", err.message);
         return "";
     }
 };
@@ -95,12 +54,12 @@ const ChatAI = () => {
         {
             id: "1",
             text: "Halo! Kawan Showsial. Ada yang bisa Cak J Bantu?",
-            text: "Halo! Kawan Showsial. Ada yang bisa Cak J Bantu?",
             isUser: false,
         },
     ]);
     const [inputText, setInputText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
+    const [faqFallback, setFaqFallback] = useState(null);
     const flatListRef = useRef(null);
     
     // Fungsi untuk memastikan scroll ke bawah
@@ -117,68 +76,23 @@ const ChatAI = () => {
         scrollToBottom();
     }, [messages]);
 
-    // Keyboard listener untuk iOS
-    // useEffect(() => {
-    //     if (Platform.OS === 'ios') {
-    //         const keyboardDidShowListener = Keyboard.addListener(
-    //             'keyboardDidShow', 
-    //             () => scrollToBottom(300)
-    //         );
-            
-    //         return () => {
-    //             keyboardDidShowListener.remove();
-    //         };
-    //     }
-    // }, []);
-    // Add this to your useEffect section specifically for Android
-useEffect(() => {
-  if (Platform.OS === 'android') {
-      const keyboardDidShowListener = Keyboard.addListener(
-          'keyboardDidShow', 
-          () => {
-              scrollToBottom(100);
-          }
-      );
-      
-      const keyboardDidHideListener = Keyboard.addListener(
-          'keyboardDidHide',
-          () => {
-              // Force scroll update after keyboard closes on Android
-              setTimeout(() => {
-                  if (flatListRef.current) {
-                      flatListRef.current.scrollToEnd({ animated: false });
-                      // Try again after a slightly longer delay to ensure it works
-                      setTimeout(() => {
-                          flatListRef.current.scrollToEnd({ animated: false });
-                      }, 300);
-                  }
-              }, 100);
-          }
-      );
-      
-      return () => {
-          keyboardDidShowListener.remove();
-          keyboardDidHideListener.remove();
-      };
-  }
-}, []);
-const formatMessagesForOpenAI = (messages) => {
-    return messages.map((msg) => ({
-      role: msg.isUser ? "user" : "assistant",
-      content: msg.text,
-    }));
-  };
-  
-const formatMessagesForOpenAI = (messages) => {
-    return messages.map((msg) => ({
-      role: msg.isUser ? "user" : "assistant",
-      content: msg.text,
-    }));
-  };
+    useEffect(() => {
+        const loadFAQs = async () => {
+            const fileContent = await fetchFileContent();
+            setFaqFallback(fileContent);
+        };
+        loadFAQs();
+    }, []);
+
+    const formatMessagesForOpenAI = (messages) => {
+        return messages.map((msg) => ({
+            role: msg.isUser ? "user" : "assistant",
+            content: msg.text,
+        }));
+    };
   
     const sendMessage = async () => {
         if (inputText.trim() === "") return;
-    
     
         const userMessage = {
             id: Date.now().toString(),
@@ -186,14 +100,11 @@ const formatMessagesForOpenAI = (messages) => {
             isUser: true,
         };
     
-    
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInputText("");
     
-    
         scrollToBottom();
-    
     
         const typingMessage = {
             id: "typing-indicator",
@@ -203,16 +114,13 @@ const formatMessagesForOpenAI = (messages) => {
         };
         setMessages((prev) => [...prev, typingMessage]);
     
-    
         try {
             if (!apiKey) throw new Error("API key tidak tersedia.");
     
-    
-            const formattedMessages = formatMessagesForOpenAI(updatedMessages);
-    
+            // Batasi pesan yang dikirim (misalnya 5 pesan terakhir)
+            const formattedMessages = formatMessagesForOpenAI(updatedMessages.slice(-5));
     
             const fileContent = await fetchFileContent();
-    
     
             const response = await openai.chat.completions.create({
                 model: "gpt-4o-mini",
@@ -223,23 +131,17 @@ const formatMessagesForOpenAI = (messages) => {
                         Anda adalah asisten AI bernama Cak J untuk aplikasi Dinsos Mobile.
                         Tugas Anda adalah membantu menjawab pertanyaan pengguna seputar layanan Dinas Sosial.
                         Gunakan daftar FAQ berikut ini sebagai satu-satunya sumber informasi.
-
+    
                         Pahami makna pertanyaan pengguna. Lakukan pencocokan semantik — tidak harus kata-kata persis sama.
-                        Jika Anda menemukan pertanyaan yang relevan dalam FAQ, jawab dengan jawaban dari FAQ.
-                        Jika tidak ada yang relevan, jawab sesuai dengan informasi yang ada di google untuk membantu kamu.
-                        jawab pertanyaan dengan respon yang asik dan tidak kaku setelah menjawab faq respon dengan bertanya kembali apa yang bida dibantu"
-
                         FAQ:
-
                         ${fileContent}
                         `,
                     },
                     ...formattedMessages,
                 ],
                 temperature: 0.3,
-                temperature: 0.3,
+                max_tokens: 150, // Kurangi jumlah token
             });
-    
     
             const botResponse = {
                 id: Date.now().toString() + "-bot",
@@ -247,12 +149,10 @@ const formatMessagesForOpenAI = (messages) => {
                 isUser: false,
             };
     
-    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 botResponse,
             ]);
-    
     
             scrollToBottom();
         } catch (error) {
@@ -264,13 +164,11 @@ const formatMessagesForOpenAI = (messages) => {
                 isError: true,
             };
     
-    
             setMessages((prev) => [
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 errorMessage,
             ]);
         }
-    };    
     };    
 
     const dismissKeyboard = () => Keyboard.dismiss();
@@ -351,7 +249,7 @@ const formatMessagesForOpenAI = (messages) => {
                             style={styles.messageList}
                             contentContainerStyle={{
                                 ...styles.messageListContent,
-                                paddingBottom: 70,  // Tambahkan padding extra
+                                paddingBottom: 70,
                             }}
                             onContentSizeChange={() => scrollToBottom()}
                             onLayout={() => scrollToBottom()}
@@ -381,18 +279,11 @@ const formatMessagesForOpenAI = (messages) => {
                                     />
                                 ) : (
                                     <TouchableOpacity
-                                        style={[
-                                            styles.sendButton,
-                                            inputText.trim() === "" &&
-                                                styles.sendButtonDisabled,
-                                        ]}
+                                        style={[styles.sendButton, inputText.trim() === "" && styles.sendButtonDisabled]}
                                         onPress={sendMessage}
-                                        disabled={inputText.trim() === ""}>
-                                        <Ionicons
-                                            name="send"
-                                            size={20}
-                                            color="white"
-                                        />
+                                        disabled={inputText.trim() === ""}
+                                    >
+                                        <Ionicons name="send" size={20} color="white" />
                                     </TouchableOpacity>
                                 )}
                             </View>
@@ -441,18 +332,11 @@ const formatMessagesForOpenAI = (messages) => {
                                         />
                                     ) : (
                                         <TouchableOpacity
-                                            style={[
-                                                styles.sendButton,
-                                                inputText.trim() === "" &&
-                                                    styles.sendButtonDisabled,
-                                            ]}
+                                            style={[styles.sendButton, inputText.trim() === "" && styles.sendButtonDisabled]}
                                             onPress={sendMessage}
-                                            disabled={inputText.trim() === ""}>
-                                            <Ionicons
-                                                name="send"
-                                                size={20}
-                                                color="white"
-                                            />
+                                            disabled={inputText.trim() === ""}
+                                        >
+                                            <Ionicons name="send" size={20} color="white" />
                                         </TouchableOpacity>
                                     )}
                                 </View>

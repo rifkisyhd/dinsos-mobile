@@ -2,7 +2,7 @@ const axios = require('axios');
 
 axios.interceptors.request.use(
   config => {
-    const token = process.env.TOKEN;
+    const token = process.env.API_TOKEN;
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -10,17 +10,6 @@ axios.interceptors.request.use(
   },
   error => Promise.reject(error)
 );
-
-const getBNBA = async (req, res) => {
-  const { program, periode } = req.params;
-  const url = `https://sapabansos.dinsos.jatimprov.go.id/api/bnba/${program}/${periode || ''}`;
-  try {
-    const response = await axios.get(url);
-    res.json(response.data);
-  } catch (err) {
-    res.status(500).json({ error: 'Gagal ambil data BNBA' });
-  }
-};
 
 const getRekap = async (req, res) => {
   const { program, periode } = req.params;
@@ -33,4 +22,4 @@ const getRekap = async (req, res) => {
   }
 };
 
-module.exports = { getBNBA, getRekap };
+module.exports = { getRekap };
