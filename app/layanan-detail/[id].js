@@ -27,6 +27,7 @@ export default function DetailLayananScreen() {
     const [errorMsg, setErrorMsg] = useState("");
     const [isImageVisible, setIsImageVisible] = useState(false); // Modal visibility for zoom
     const [selectedImage, setSelectedImage] = useState(null); // Selected image for zoom
+    const [showNoDataModal, setShowNoDataModal] = useState(false); // State untuk modal popup
 
     useEffect(() => {
         if (!id) return;
@@ -47,6 +48,24 @@ export default function DetailLayananScreen() {
             }
         })();
     }, [id]);
+
+    useEffect(() => {
+        if (layanan) {
+            // Cek apakah tidak ada gambar
+            const imageUrls = [
+                layanan.image_1,
+                layanan.image_2,
+                layanan.image_3,
+                layanan.image_4,
+                layanan.image_5,
+            ].filter((url) => url);
+
+            // Jika tidak ada gambar, tampilkan modal
+            if (imageUrls.length === 0) {
+                setShowNoDataModal(true);
+            }
+        }
+    }, [layanan]);
 
     if (loading) return <LoadingScreen />;
 
@@ -89,23 +108,9 @@ export default function DetailLayananScreen() {
                 textColor="white"
             />
             <View style={styles.content}>
-                {/* {layanan.image_url && (
-                    <Image
-                        source={{ uri: layanan.image_url }}
-                        style={styles.image}
-                    />
-                )} */}
                 {layanan.subtitle && (
                     <Text style={styles.subtitle}>{layanan.subtitle}</Text>
                 )}
-
-                {/* Deskripsi */}
-                {/* {layanan.description && (
-                    <StyledDescription
-                        description={layanan.description}
-                        boldColor={"#33A9FF"}
-                    />
-                )} */}
 
                 {/* Render gambar */}
                 {imageUrls.length > 0 && (
@@ -140,6 +145,30 @@ export default function DetailLayananScreen() {
                     onRequestClose={() => setIsImageVisible(false)} // Menutup modal
                 />
             )}
+
+            {/* Modal jika gambar tidak tersedia */}
+                <Modal
+                    visible={showNoDataModal}
+                    transparent
+                    animationType="fade">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalText}>
+                                Data belum tersedia
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowNoDataModal(false);
+                                    router.back();
+                                }}
+                                style={styles.modalButton}>
+                                <Text style={styles.modalButtonText}>
+                                    Kembali
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
         </ScrollView>
     );
 }

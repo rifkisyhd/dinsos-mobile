@@ -7,6 +7,7 @@ import {
     Image,
     StatusBar,
     Dimensions,
+    Modal,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabaseClient";
@@ -25,8 +26,9 @@ export default function DetailPerizinanScreen() {
     const [perizinan, setPerizinan] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
-    const [isImageVisible, setIsImageVisible] = useState(false); // For modal visibility
-    const [selectedImage, setSelectedImage] = useState(null); // Store selected image for modal
+    const [isImageVisible, setIsImageVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showNoDataModal, setShowNoDataModal] = useState(false); 
 
     useEffect(() => {
         if (!id) return;
@@ -47,9 +49,22 @@ export default function DetailPerizinanScreen() {
             `,
                     )
                     .eq("id", id)
-                    .single(); // Get single perizinan by ID
+                    .single();
                 if (error) throw error;
                 setPerizinan(data);
+
+                // Cek apakah semua image kosong
+                const images = [
+                    data.image_1,
+                    data.image_2,
+                    data.image_3,
+                    data.image_4,
+                    data.image_5,
+                ].filter((url) => url);
+
+                if (images.length === 0) {
+                    setShowNoDataModal(true);
+                }
             } catch (error) {
                 setErrorMsg(error.message || "Gagal memuat data");
             } finally {
@@ -77,7 +92,6 @@ export default function DetailPerizinanScreen() {
         );
     }
 
-    // Prepare image URLs, filter out empty URLs
     const imageUrls = [
         perizinan.image_1,
         perizinan.image_2,
@@ -86,10 +100,9 @@ export default function DetailPerizinanScreen() {
         perizinan.image_5,
     ].filter((url) => url);
 
-    // Open image in modal
     const openModal = (imageUrl) => {
-        setSelectedImage([{ uri: imageUrl }]); // Set selected image for zoom
-        setIsImageVisible(true); // Show modal
+        setSelectedImage([{ uri: imageUrl }]);
+        setIsImageVisible(true);
     };
 
     return (
@@ -101,28 +114,12 @@ export default function DetailPerizinanScreen() {
                 textColor="white"
             />
             <View style={styles.content}>
-                {/* {perizinan.image_url && (
-                    <Image
-                        source={{ uri: perizinan.image_url }}
-                        style={styles.image}
-                    />
-                )} */}
-                {/* {perizinan.subtitle && <Text style={styles.subtitle}>{perizinan.subtitle}</Text>} */}
-                {/* {perizinan.description && (
-                    <StyledDescription
-                        description={perizinan.description}
-                        style={styles.description}
-                        boldColor={"#33A9FF"}
-                    />
-                )} */}
-
-                {/* Render images */}
                 {imageUrls.length > 0 && (
                     <View style={{ marginTop: 0 }}>
                         {imageUrls.map((imageUrl, idx) => (
                             <TouchableOpacity
                                 key={idx}
-                                onPress={() => openModal(imageUrl)} // Open image modal on click
+                                onPress={() => openModal(imageUrl)}
                                 style={{ marginBottom: 20 }}>
                                 <Image
                                     source={{ uri: imageUrl }}
@@ -131,7 +128,7 @@ export default function DetailPerizinanScreen() {
                                         height: 450,
                                         borderRadius: 10,
                                         alignSelf: "center",
-                                      }}
+                                    }}
                                     resizeMode="cover"
                                 />
                             </TouchableOpacity>
@@ -140,15 +137,34 @@ export default function DetailPerizinanScreen() {
                 )}
             </View>
 
-            {/* Modal for zoomed image */}
+            {/* Modal buat zoom gambar */}
             {selectedImage && (
                 <ImageViewing
-                    images={selectedImage} // Show selected image
-                    imageIndex={0} // Start with the first image in the list
-                    visible={isImageVisible} // Display the modal
-                    onRequestClose={() => setIsImageVisible(false)} // Close the modal
+                    images={selectedImage}
+                    imageIndex={0}
+                    visible={isImageVisible}
+                    onRequestClose={() => setIsImageVisible(false)}
                 />
             )}
+
+            {/* Modal kalau gambar gak ada */}
+            <Modal visible={showNoDataModal} transparent animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>
+                            Data belum tersedia
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowNoDataModal(false);
+                                router.back();
+                            }}
+                            style={styles.modalButton}>
+                            <Text style={styles.modalButtonText}>Kembali</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
         </ScrollView>
     );
 }
