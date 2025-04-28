@@ -46,6 +46,7 @@
     "react-native": "0.76.7",
     "react-native-gesture-handler": "~2.20.2",
     "react-native-image-viewing": "^0.2.2",
+    "react-native-image-zoom-viewer": "^3.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.9.5",
     "react-native-reanimated": "~3.16.1",
     "react-native-safe-area-context": "^5.4.0",

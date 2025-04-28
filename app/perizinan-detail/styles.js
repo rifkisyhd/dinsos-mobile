@@ -5,9 +5,9 @@ export const styles = StyleSheet.create({
     backgroundColor: '#fff',
     flexGrow: 1,
   },
-  content:{
-    paddingHorizontal: 20,
-
+  content: {
+    flex: 1,
+    padding: 16,
   },
   title: {
     fontSize: 22,
