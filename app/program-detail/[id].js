@@ -128,6 +128,7 @@ export default function ProgramDetailScreen() {
                                             height: 450,
                                             borderRadius: 10,
                                             alignSelf: "center",
+                                            marginBottom: 10,
                                         }}
                                         contentFit="cover"
                                         placeholder={img} // Bisa di-set placeholder sementara

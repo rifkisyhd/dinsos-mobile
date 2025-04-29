@@ -127,6 +127,7 @@ export default function DetailLayananScreen() {
                                         height: 450,
                                         borderRadius: 10,
                                         alignSelf: "center",
+                                        marginBottom: 10,
                                     }}
                                     contentFit="cover"
                                     placeholder={imageUrl}  // Bisa di-set placeholder sementara
