@@ -20,33 +20,15 @@ import OpenAI from "openai";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 import LottieView from "lottie-react-native";
-
-import { supabase } from "../../../lib/supabaseClient";
+import { FAQManager } from "./FAQManager";
 
 const apiKey =
     Constants.expoConfig?.extra?.EXPO_PUBLIC_OPENAI_API_KEY ||
     process.env.EXPO_PUBLIC_OPENAI_API_KEY;
 const openai = new OpenAI({ apiKey });
 
-const fetchFileContent = async () => {
-    const { data, error } = await supabase
-        .from('faqs') 
-        .select('question, answer, category')
-        .eq('is_active', true);
-
-    if (error || !data) {
-        console.error("Gagal mengambil data FAQ:", error?.message || "Data kosong");
-        return "";
-    }
-
-    try {
-        const combinedText = data.map((item) => `question: ${item.question}\nanswer: ${item.answer}`).join("\n\n");
-        return combinedText;
-    } catch (err) {
-        console.error("Error saat memproses data FAQ:", err.message);
-        return "";
-    }
-};
+// Buat instance FAQManager yang bisa digunakan di seluruh aplikasi
+const faqManager = new FAQManager();
 
 const ChatAI = () => {
     const router = useRouter();
@@ -59,7 +41,7 @@ const ChatAI = () => {
     ]);
     const [inputText, setInputText] = useState("");
     const [isLoading, setIsLoading] = useState(false);
-    const [faqFallback, setFaqFallback] = useState(null);
+    const [faqsLoaded, setFaqsLoaded] = useState(false);
     const flatListRef = useRef(null);
     
     // Fungsi untuk memastikan scroll ke bawah
@@ -76,11 +58,17 @@ const ChatAI = () => {
         scrollToBottom();
     }, [messages]);
 
+    // Memuat FAQ hanya sekali di awal
     useEffect(() => {
         const loadFAQs = async () => {
-            const fileContent = await fetchFileContent();
-            setFaqFallback(fileContent);
+            try {
+                await faqManager.fetchFAQs();
+                setFaqsLoaded(true);
+            } catch (err) {
+                console.error("Gagal memuat FAQ:", err);
+            }
         };
+        
         loadFAQs();
     }, []);
 
@@ -103,6 +91,7 @@ const ChatAI = () => {
         const updatedMessages = [...messages, userMessage];
         setMessages(updatedMessages);
         setInputText("");
+        setIsLoading(true);
     
         scrollToBottom();
     
@@ -113,34 +102,51 @@ const ChatAI = () => {
             isTyping: true,
         };
         setMessages((prev) => [...prev, typingMessage]);
-    
+        
         try {
             if (!apiKey) throw new Error("API key tidak tersedia.");
-    
-            // Batasi pesan yang dikirim (misalnya 5 pesan terakhir)
-            const formattedMessages = formatMessagesForOpenAI(updatedMessages.slice(-5));
-    
-            const fileContent = await fetchFileContent();
+            
+            // Pastikan FAQ sudah dimuat
+            if (!faqsLoaded) {
+                await faqManager.fetchFAQs();
+            }
+            
+            // Coba cari jawaban sederhana dari FAQ terlebih dahulu
+            const basicMatch = faqManager.findBasicMatch(userMessage.text);
+            
+            if (basicMatch) {
+                // Jika ada kecocokan dasar, gunakan jawaban dari FAQ tanpa perlu API call
+                const botResponse = {
+                    id: Date.now().toString() + "-bot",
+                    text: basicMatch,
+                    isUser: false,
+                };
+                
+                setMessages((prev) => [
+                    ...prev.filter((msg) => msg.id !== "typing-indicator"),
+                    botResponse,
+                ]);
+                
+                scrollToBottom();
+                return;
+            }
+            
+            // Jika tidak ada kecocokan dasar, gunakan OpenAI API
+            // Batasi pesan yang dikirim (hanya 3 pesan terakhir)
+            const recentMessages = updatedMessages.slice(-3);
+            const formattedMessages = formatMessagesForOpenAI(recentMessages);
     
             const response = await openai.chat.completions.create({
-                model: "gpt-4o-mini",
+                model: "gpt-4o-mini", // Menggunakan model yang efisien
                 messages: [
                     {
                         role: "system",
-                        content: `
-                        Anda adalah asisten AI bernama Cak J untuk aplikasi Dinsos Mobile.
-                        Tugas Anda adalah membantu menjawab pertanyaan pengguna seputar layanan Dinas Sosial.
-                        Gunakan daftar FAQ berikut ini sebagai satu-satunya sumber informasi.
-    
-                        Pahami makna pertanyaan pengguna. Lakukan pencocokan semantik — tidak harus kata-kata persis sama.
-                        FAQ:
-                        ${fileContent}
-                        `,
+                        content: faqManager.getSystemPrompt(),
                     },
                     ...formattedMessages,
                 ],
                 temperature: 0.3,
-                max_tokens: 150, // Kurangi jumlah token
+                max_tokens: 150, // Batasi jumlah token output
             });
     
             const botResponse = {
@@ -168,6 +174,8 @@ const ChatAI = () => {
                 ...prev.filter((msg) => msg.id !== "typing-indicator"),
                 errorMessage,
             ]);
+        } finally {
+            setIsLoading(false);
         }
     };    
 
@@ -271,21 +279,17 @@ const ChatAI = () => {
                                     maxHeight={100}
                                     onFocus={scrollToBottom}
                                 />
-                                {isLoading ? (
-                                    <ActivityIndicator
-                                        size="small"
-                                        color="#0084ff"
-                                        style={styles.sendButton}
-                                    />
-                                ) : (
-                                    <TouchableOpacity
-                                        style={[styles.sendButton, inputText.trim() === "" && styles.sendButtonDisabled]}
-                                        onPress={sendMessage}
-                                        disabled={inputText.trim() === ""}
-                                    >
+                                <TouchableOpacity
+                                    style={[styles.sendButton, (inputText.trim() === "" || isLoading) && styles.sendButtonDisabled]}
+                                    onPress={sendMessage}
+                                    disabled={inputText.trim() === "" || isLoading}
+                                >
+                                    {isLoading ? (
+                                        <ActivityIndicator size="small" color="white" />
+                                    ) : (
                                         <Ionicons name="send" size={20} color="white" />
-                                    </TouchableOpacity>
-                                )}
+                                    )}
+                                </TouchableOpacity>
                             </View>
                         </View>
                     </View>
@@ -324,21 +328,17 @@ const ChatAI = () => {
                                         maxHeight={100}
                                         onFocus={scrollToBottom}
                                     />
-                                    {isLoading ? (
-                                        <ActivityIndicator
-                                            size="small"
-                                            color="#0084ff"
-                                            style={styles.sendButton}
-                                        />
-                                    ) : (
-                                        <TouchableOpacity
-                                            style={[styles.sendButton, inputText.trim() === "" && styles.sendButtonDisabled]}
-                                            onPress={sendMessage}
-                                            disabled={inputText.trim() === ""}
-                                        >
+                                    <TouchableOpacity
+                                        style={[styles.sendButton, (inputText.trim() === "" || isLoading) && styles.sendButtonDisabled]}
+                                        onPress={sendMessage}
+                                        disabled={inputText.trim() === "" || isLoading}
+                                    >
+                                        {isLoading ? (
+                                            <ActivityIndicator size="small" color="white" />
+                                        ) : (
                                             <Ionicons name="send" size={20} color="white" />
-                                        </TouchableOpacity>
-                                    )}
+                                        )}
+                                    </TouchableOpacity>
                                 </View>
                             </View>
                         </View>
