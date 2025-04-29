@@ -1,68 +1,170 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, ActivityIndicator, TouchableOpacity, StatusBar } from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { supabase } from '../../lib/supabaseClient';
-import { styles } from './styles';
+import React, { useEffect, useState } from "react";
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    StatusBar,
+    Dimensions,
+    Modal,
+} from "react-native";
+import { useLocalSearchParams, useRouter } from "expo-router";
+import { supabase } from "../../lib/supabaseClient";
+import { Ionicons } from "@expo/vector-icons";
+import Header from "../components/Header";
+import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
+import StyledDescription from "../components/StyledDescription";
+import ImageViewing from "react-native-image-viewing";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default function DetailPerizinanScreen() {
-  const { id } = useLocalSearchParams();
-  const router = useRouter();
-  const [perizinan, setPerizinan] = useState(null);
-  const [loading, setLoading] = useState(true);
-  const [errorMsg, setErrorMsg] = useState('');
+    const { id } = useLocalSearchParams();
+    const router = useRouter();
+    const [perizinan, setPerizinan] = useState(null);
+    const [loading, setLoading] = useState(true);
+    const [errorMsg, setErrorMsg] = useState("");
+    const [isImageVisible, setIsImageVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showNoDataModal, setShowNoDataModal] = useState(false); 
 
-  useEffect(() => {
-    if (!id) return;
-    (async () => {
-      try {
-        const { data, error } = await supabase
-          .from('tb_perizinan')
-          .select('*')
-          .eq('id', id)
-          .single();
-        if (error) throw error;
-        setPerizinan(data);
-      } catch (error) {
-        setErrorMsg(error.message || 'Gagal memuat data');
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, [id]);
+    useEffect(() => {
+        if (!id) return;
+        (async () => {
+            try {
+                const { data, error } = await supabase
+                    .from("tb_perizinan")
+                    .select(
+                        `
+            id,
+            title,
+            description, 
+            image_1, 
+            image_2,
+            image_3,
+            image_4,
+            image_5
+            `,
+                    )
+                    .eq("id", id)
+                    .single();
+                if (error) throw error;
+                setPerizinan(data);
 
-  if (loading) {
+                // Cek apakah semua image kosong
+                const images = [
+                    data.image_1,
+                    data.image_2,
+                    data.image_3,
+                    data.image_4,
+                    data.image_5,
+                ].filter((url) => url);
+
+                if (images.length === 0) {
+                    setShowNoDataModal(true);
+                }
+            } catch (error) {
+                setErrorMsg(error.message || "Gagal memuat data");
+            } finally {
+                setLoading(false);
+            }
+        })();
+    }, [id]);
+
+    if (loading) {
+        return <LoadingScreen />;
+    }
+
+    if (errorMsg || !perizinan) {
+        return (
+            <View style={styles.errorContainer}>
+                <Text style={styles.errorText}>
+                    {errorMsg || "Data tidak ditemukan"}
+                </Text>
+                <TouchableOpacity
+                    onPress={() => router.back()}
+                    style={styles.backButton}>
+                    <Text style={styles.backText}>Kembali</Text>
+                </TouchableOpacity>
+            </View>
+        );
+    }
+
+    const imageUrls = [
+        perizinan.image_1,
+        perizinan.image_2,
+        perizinan.image_3,
+        perizinan.image_4,
+        perizinan.image_5,
+    ].filter((url) => url);
+
+    const openModal = (imageUrl) => {
+        setSelectedImage([{ uri: imageUrl }]);
+        setIsImageVisible(true);
+    };
+
     return (
-      <LoadingScreen />
+        <ScrollView contentContainerStyle={styles.container}>
+            <StatusBar barStyle="dark-content" backgroundColor="transparent" />
+            <Header
+                title={perizinan.title || "Detail Perizinan"}
+                backgroundColor="#33A9FF"
+                textColor="white"
+            />
+            <View style={styles.content}>
+                {imageUrls.length > 0 && (
+                    <View style={{ marginTop: 0 }}>
+                        {imageUrls.map((imageUrl, idx) => (
+                            <TouchableOpacity
+                                key={idx}
+                                onPress={() => openModal(imageUrl)}
+                                style={{ marginBottom: 20 }}>
+                                <Image
+                                    source={{ uri: imageUrl }}
+                                    style={{
+                                        width: screenWidth - 32,
+                                        height: 450,
+                                        borderRadius: 10,
+                                        alignSelf: "center",
+                                    }}
+                                    resizeMode="cover"
+                                />
+                            </TouchableOpacity>
+                        ))}
+                    </View>
+                )}
+            </View>
+
+            {/* Modal buat zoom gambar */}
+            {selectedImage && (
+                <ImageViewing
+                    images={selectedImage}
+                    imageIndex={0}
+                    visible={isImageVisible}
+                    onRequestClose={() => setIsImageVisible(false)}
+                />
+            )}
+
+            {/* Modal kalau gambar gak ada */}
+            <Modal visible={showNoDataModal} transparent animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>
+                            Data belum tersedia
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowNoDataModal(false);
+                                router.back();
+                            }}
+                            style={styles.modalButton}>
+                            <Text style={styles.modalButtonText}>Kembali</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </Modal>
+        </ScrollView>
     );
-  }
-
-  if (errorMsg) {
-    return (
-      <View style={styles.errorContainer}>
-        <Text style={styles.errorText}>{errorMsg}</Text>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>Kembali</Text>
-        </TouchableOpacity>
-      </View>
-    );
-  }
-
-  return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <StatusBar barStyle="dark-content" backgroundColor="#33A9FF" />
-
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.title}>{perizinan.title}</Text>
-      </View>
-      {perizinan.image_url && (
-        <Image source={{ uri: perizinan.image_url }} style={styles.image} />
-      )}
-      {/* {perizinan.subtitle && <Text style={styles.subtitle}>{perizinan.subtitle}</Text>} */}
-      {perizinan.description && <Text style={styles.description}>{perizinan.description}</Text>}
-    </ScrollView>
-  );
 }

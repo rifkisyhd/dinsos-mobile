@@ -13,6 +13,7 @@ import { styles } from "./styles";
 import { Ionicons } from "@expo/vector-icons";
 import LoadingScreen from "../components/LoadingScreen";
 import { supabase } from "../../lib/supabaseClient";
+import Header from "../components/Header"
 
 export default function ProgramScreen() {
     const router = useRouter();
@@ -35,41 +36,35 @@ export default function ProgramScreen() {
         fetchPrograms();
     }, []);
 
+    if (loading) {
+        return (
+            <SafeAreaView style={styles.container}>
+                <LoadingScreen />
+            </SafeAreaView>
+        );
+    }
+
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="light" />
 
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}>
-                    <Ionicons name="arrow-back" size={24} color="white" />
-                </TouchableOpacity>
-                <Text style={styles.headerTitle}>Program</Text>
-            </View>
+            {/* Header baru tampil setelah loading selesai */}
+            <Header title="Program" backgroundColor="#33A9FF" textColor="white" />
 
             {/* Bungkus list pakai ScrollView biar bisa scroll jika banyak */}
             <ScrollView contentContainerStyle={styles.content}>
-                {loading ? (
-                    <LoadingScreen />
-                ) : (
-                    programs.map((program) => (
-                        <TouchableOpacity
-                            key={program.id}
-                            style={styles.programCard}
-                            onPress={() =>
-                                router.push(`/bidang/${program.id}`)
-                            }>
-                            <Image
-                                source={{ uri: program.image_url }}
-                                style={styles.icon}
-                            />
-                            <Text style={styles.programName}>
-                                {program.title}
-                            </Text>
-                        </TouchableOpacity>
-                    ))
-                )}
+                {programs.map((program) => (
+                    <TouchableOpacity
+                        key={program.id}
+                        style={styles.programCard}
+                        onPress={() => router.push(`/bidang/${program.id}`)}>
+                        <Image
+                            source={{ uri: program.image_url }}
+                            style={styles.icon}
+                        />
+                        <Text style={styles.programName}>{program.title}</Text>
+                    </TouchableOpacity>
+                ))}
             </ScrollView>
         </SafeAreaView>
     );

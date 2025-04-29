@@ -6,27 +6,6 @@ export const styles = StyleSheet.create({
     // backgroundColor: "#f5f5f5",
     backgroundColor: "#33A9FF",
   },
-
-  header: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 10 : 10,
-    backgroundColor: "#33A9FF",
-    paddingVertical: Platform.OS === "ios" ? StatusBar.currentHeight + 20 : 25,
-    paddingHorizontal: 16,
-    flexDirection: "row",
-    alignItems: "center",
-    zIndex: 10,
-  },
-  backButton: {
-    marginRight: 16,
-    top: Platform.OS === "ios" ? 0 : 10,
-  },
-  headerTitle: {
-    color: "white",
-    fontSize: 18,
-    fontWeight: "bold",
-    top: Platform.OS === "ios" ? 0 : 10,
-    // marginHorizontal: Platform.OS === "ios" ? 15 : 20,
-  },
   dropdownContainer: {
     padding: 5,
     position: "relative",

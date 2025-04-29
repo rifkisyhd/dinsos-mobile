@@ -5,33 +5,11 @@ import Constants from 'expo-constants';
 export const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingTop: Constants.statusBarHeight + 16,
-    paddingHorizontal: 16,
     backgroundColor: '#fff',
   },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 24,
-  },
-  backButton: {
-    padding: 8,
-    marginRight: 12,
-  },
-  backText: {
-    fontSize: 24,
-    color: '#33A9FF',
-  },
-  title: {
+  content: {
     flex: 1,
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
-  },
-  subtitle: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 12,
+    padding: 16,
   },
   description: {
     fontSize: 15,
@@ -41,5 +19,34 @@ export const styles = StyleSheet.create({
 
   errorContainer: {
     marginTop: 50,
-  }
+  },
+  // Styles untuk popup tidak ada data
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  modalContainer: {
+    backgroundColor: "white",
+    padding: 20,
+    borderRadius: 10,
+    width: "80%",
+    alignItems: "center",
+  },
+  modalText: {
+    fontSize: 16,
+    marginBottom: 20,
+    textAlign: "center",
+  },
+  modalButton: {
+    backgroundColor: "#33A9FF",
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 5,
+  },
+  modalButtonText: {
+    color: "white",
+    fontWeight: "bold",
+  },
 });

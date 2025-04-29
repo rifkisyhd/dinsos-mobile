@@ -7,21 +7,6 @@ export const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#5b8ba6",
   },
-  header: {
-    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight + 20 : 10,
-    flexDirection: "row",
-    alignItems: "center",
-    padding: 15,
-    backgroundColor: "#5b8ba6",
-  },
-  backButton: {
-    marginRight: 10,
-  },
-  headerTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    color: "#fff",
-  },
   scrollView: {
     flex: 1,
   },

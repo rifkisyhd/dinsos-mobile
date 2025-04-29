@@ -1,9 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import {
+    View,
+    Text,
+    ScrollView,
+    TouchableOpacity,
+    Image,
+    Dimensions,
+    Modal,
+} from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { supabase } from "../../lib/supabaseClient";
 import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
+import Header from "../components/Header";
+import ImageViewing from "react-native-image-viewing";
+
+const screenWidth = Dimensions.get("window").width;
 
 export default function ProgramDetailScreen() {
     const { id } = useLocalSearchParams();
@@ -11,28 +23,50 @@ export default function ProgramDetailScreen() {
     const [bidangDetail, setBidangDetail] = useState(null);
     const [loading, setLoading] = useState(true);
     const [errorMsg, setErrorMsg] = useState("");
+    const [isImageVisible, setIsImageVisible] = useState(false);
+    const [selectedImage, setSelectedImage] = useState(null);
+    const [showNoDataModal, setShowNoDataModal] = useState(false);
 
     useEffect(() => {
         if (!id) return;
         (async () => {
             try {
                 const { data, error } = await supabase
-                .from("tb_bidang_detail")
-                .select(`
-                    id,
-                    description,
-                    bidang_id,
-                    tb_bidang (
-                      id,
-                      description
+                    .from("tb_bidang_detail")
+                    .select(
+                        `
+            id,
+            description,
+            bidang_id,
+            image_1,
+            image_2,
+            image_3,
+            image_4,
+            image_5,
+            tb_bidang (
+              id,
+              description
+            )
+          `,
                     )
-                  `)
-                .eq("id", Number(id))
-                .maybeSingle();
+                    .eq("id", Number(id))
+                    .maybeSingle();
 
                 if (error) throw error;
-                console.log("DATA:", data);
                 setBidangDetail(data);
+
+                // Jika tidak ada gambar, tampilkan popup
+                const images = [
+                    data.image_1,
+                    data.image_2,
+                    data.image_3,
+                    data.image_4,
+                    data.image_5,
+                ].filter((url) => url);
+
+                if (images.length === 0) {
+                    setShowNoDataModal(true);
+                }
             } catch (error) {
                 setErrorMsg(error.message || "Gagal memuat data");
             } finally {
@@ -58,22 +92,83 @@ export default function ProgramDetailScreen() {
         );
     }
 
-    return (
-        <ScrollView contentContainerStyle={styles.container}>
-            <View style={styles.header}>
-                <TouchableOpacity
-                    onPress={() => router.back()}
-                    style={styles.backButton}>
-                    <Text style={styles.backText}>←</Text>
-                </TouchableOpacity>
-                <Text style={styles.title}>
-                    {bidangDetail.tb_bidang.description || "Nama Bidang"}
-                </Text>
-            </View>
+    const images = [
+        bidangDetail.image_1,
+        bidangDetail.image_2,
+        bidangDetail.image_3,
+        bidangDetail.image_4,
+        bidangDetail.image_5,
+    ].filter((url) => url);
 
-            <Text style={styles.description}>
-                {bidangDetail.description || "Tidak ada deskripsi detail."}
-            </Text>
-        </ScrollView>
+    return (
+        <>
+            <ScrollView contentContainerStyle={styles.container}>
+                <Header
+                    title={
+                        bidangDetail?.tb_bidang?.description || "Nama Bidang"
+                    }
+                    backgroundColor="#33A9FF"
+                    textColor="white"
+                />
+                <View style={styles.content}>
+                    {images.length > 0 && (
+                        <View style={styles.imagesWrapper}>
+                            {images.map((img, idx) => (
+                                <TouchableOpacity
+                                    key={idx}
+                                    onPress={() => {
+                                        setSelectedImage([{ uri: img }]);
+                                        setIsImageVisible(true);
+                                    }}
+                                    style={styles.imageTouchable}>
+                                    <Image
+                                        source={{ uri: img }}
+                                        style={[
+                                            styles.image,
+                                            { width: screenWidth - 32 },
+                                        ]}
+                                        resizeMode="cover"
+                                    />
+                                </TouchableOpacity>
+                            ))}
+                        </View>
+                    )}
+                </View>
+
+                {/* Modal Zoom Gambar */}
+                {selectedImage && (
+                    <ImageViewing
+                        images={selectedImage}
+                        imageIndex={0}
+                        visible={isImageVisible}
+                        onRequestClose={() => setIsImageVisible(false)}
+                    />
+                )}
+
+                {/* Popup jika gambar tidak ada */}
+                <Modal
+                    visible={showNoDataModal}
+                    transparent
+                    animationType="fade">
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            <Text style={styles.modalText}>
+                                Data belum tersedia
+                            </Text>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    setShowNoDataModal(false);
+                                    router.back();
+                                }}
+                                style={styles.modalButton}>
+                                <Text style={styles.modalButtonText}>
+                                    Kembali
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+            </ScrollView>
+        </>
     );
 }

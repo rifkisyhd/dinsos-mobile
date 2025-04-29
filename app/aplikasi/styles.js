@@ -5,25 +5,6 @@ export const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: "#33A9FF",
     },
-    header: {
-        paddingTop:
-            Platform.OS === "android" ? StatusBar.currentHeight + 20 : 10,
-        backgroundColor: "#33A9FF",
-        flexDirection: "row",
-        alignItems: "center",
-        paddingHorizontal: 16,
-        paddingVertical: 16,
-        borderBottomWidth: 1,
-        borderBottomColor: "rgba(255, 255, 255, 0.2)",
-    },
-    backButton: {
-        marginRight: 16,
-    },
-    headerTitle: {
-        color: "white",
-        fontSize: 18,
-        fontWeight: "bold",
-    },
     content: {
         flex: 1,
         padding: 16,
