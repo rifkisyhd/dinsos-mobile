@@ -4,7 +4,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Image,
     StatusBar,
     Dimensions,
     Modal,
@@ -17,6 +16,7 @@ import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
 import StyledDescription from "../components/StyledDescription";
 import ImageViewing from "react-native-image-viewing";
+import { Image } from "expo-image";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -28,7 +28,7 @@ export default function DetailPerizinanScreen() {
     const [errorMsg, setErrorMsg] = useState("");
     const [isImageVisible, setIsImageVisible] = useState(false);
     const [selectedImage, setSelectedImage] = useState(null);
-    const [showNoDataModal, setShowNoDataModal] = useState(false); 
+    const [showNoDataModal, setShowNoDataModal] = useState(false);
 
     useEffect(() => {
         if (!id) return;
@@ -129,7 +129,9 @@ export default function DetailPerizinanScreen() {
                                         borderRadius: 10,
                                         alignSelf: "center",
                                     }}
-                                    resizeMode="cover"
+                                    contentFit="cover"
+                                    placeholder={imageUrl} // Bisa di-set placeholder sementara
+                                    transition={1000}
                                 />
                             </TouchableOpacity>
                         ))}

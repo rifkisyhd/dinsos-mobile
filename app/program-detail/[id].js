@@ -4,7 +4,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Image,
     Dimensions,
     Modal,
 } from "react-native";
@@ -14,6 +13,7 @@ import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
 import Header from "../components/Header";
 import ImageViewing from "react-native-image-viewing";
+import { Image } from "expo-image";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -123,11 +123,15 @@ export default function ProgramDetailScreen() {
                                     style={styles.imageTouchable}>
                                     <Image
                                         source={{ uri: img }}
-                                        style={[
-                                            styles.image,
-                                            { width: screenWidth - 32 },
-                                        ]}
-                                        resizeMode="cover"
+                                        style={{
+                                            width: screenWidth - 32,
+                                            height: 450,
+                                            borderRadius: 10,
+                                            alignSelf: "center",
+                                        }}
+                                        contentFit="cover"
+                                        placeholder={img} // Bisa di-set placeholder sementara
+                                        transition={1000}
                                     />
                                 </TouchableOpacity>
                             ))}

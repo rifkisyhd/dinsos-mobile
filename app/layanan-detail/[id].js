@@ -4,7 +4,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Image,
     StatusBar,
     Modal,
     Dimensions,
@@ -16,6 +15,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import StyledDescription from "../components/StyledDescription";
 import Header from "../components/Header";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing untuk zoom effect
+import { Image } from 'expo-image';
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -128,7 +128,9 @@ export default function DetailLayananScreen() {
                                         borderRadius: 10,
                                         alignSelf: "center",
                                     }}
-                                    resizeMode="cover"
+                                    contentFit="cover"
+                                    placeholder={imageUrl}  // Bisa di-set placeholder sementara
+                                    transition={1000}
                                 />
                             </TouchableOpacity>
                         ))}
@@ -147,28 +149,23 @@ export default function DetailLayananScreen() {
             )}
 
             {/* Modal jika gambar tidak tersedia */}
-                <Modal
-                    visible={showNoDataModal}
-                    transparent
-                    animationType="fade">
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                            <Text style={styles.modalText}>
-                                Data belum tersedia
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setShowNoDataModal(false);
-                                    router.back();
-                                }}
-                                style={styles.modalButton}>
-                                <Text style={styles.modalButtonText}>
-                                    Kembali
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+            <Modal visible={showNoDataModal} transparent animationType="fade">
+                <View style={styles.modalOverlay}>
+                    <View style={styles.modalContainer}>
+                        <Text style={styles.modalText}>
+                            Data belum tersedia
+                        </Text>
+                        <TouchableOpacity
+                            onPress={() => {
+                                setShowNoDataModal(false);
+                                router.back();
+                            }}
+                            style={styles.modalButton}>
+                            <Text style={styles.modalButtonText}>Kembali</Text>
+                        </TouchableOpacity>
                     </View>
-                </Modal>
+                </View>
+            </Modal>
         </ScrollView>
     );
 }
