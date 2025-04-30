@@ -59,6 +59,11 @@ export default function DetailLayananScreen() {
                 layanan.image_3,
                 layanan.image_4,
                 layanan.image_5,
+                layanan.image_6,
+                layanan.image_7,
+                layanan.image_8,
+                layanan.image_9,
+                layanan.image_10,
             ].filter((url) => url);
 
             // Jika tidak ada gambar, tampilkan modal
@@ -92,6 +97,11 @@ export default function DetailLayananScreen() {
         layanan.image_3,
         layanan.image_4,
         layanan.image_5,
+        layanan.image_6,
+        layanan.image_7,
+        layanan.image_8,
+        layanan.image_9,
+        layanan.image_10,
     ].filter((url) => url);
 
     // Fungsi untuk membuka modal zoom

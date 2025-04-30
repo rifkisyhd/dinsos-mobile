@@ -37,18 +37,7 @@ export default function DetailPerizinanScreen() {
             try {
                 const { data, error } = await supabase
                     .from("tb_perizinan")
-                    .select(
-                        `
-            id,
-            title,
-            description, 
-            image_1, 
-            image_2,
-            image_3,
-            image_4,
-            image_5
-            `,
-                    )
+                    .select("*")
                     .eq("id", id)
                     .single();
                 if (error) throw error;
@@ -61,6 +50,11 @@ export default function DetailPerizinanScreen() {
                     data.image_3,
                     data.image_4,
                     data.image_5,
+                    data.image_6,
+                    data.image_7,
+                    data.image_8,
+                    data.image_9,
+                    data.image_10,
                 ].filter((url) => url);
 
                 if (images.length === 0) {
@@ -99,6 +93,11 @@ export default function DetailPerizinanScreen() {
         perizinan.image_3,
         perizinan.image_4,
         perizinan.image_5,
+        perizinan.image_6,
+        perizinan.image_7,
+        perizinan.image_8,
+        perizinan.image_9,
+        perizinan.image_10,
     ].filter((url) => url);
 
     const openModal = (imageUrl) => {

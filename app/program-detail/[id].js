@@ -34,22 +34,7 @@ export default function ProgramDetailScreen() {
             try {
                 const { data, error } = await supabase
                     .from("tb_bidang_detail")
-                    .select(
-                        `
-            id,
-            description,
-            bidang_id,
-            image_1,
-            image_2,
-            image_3,
-            image_4,
-            image_5,
-            tb_bidang (
-              id,
-              description
-            )
-          `,
-                    )
+                    .select("*")
                     .eq("id", Number(id))
                     .maybeSingle();
 
@@ -63,6 +48,11 @@ export default function ProgramDetailScreen() {
                     data.image_3,
                     data.image_4,
                     data.image_5,
+                    data.image_6,
+                    data.image_7,
+                    data.image_8,
+                    data.image_9,
+                    data.image_10,
                 ].filter((url) => url);
 
                 if (images.length === 0) {
@@ -99,6 +89,11 @@ export default function ProgramDetailScreen() {
         bidangDetail.image_3,
         bidangDetail.image_4,
         bidangDetail.image_5,
+        bidangDetail.image_6,
+        bidangDetail.image_7,
+        bidangDetail.image_8,
+        bidangDetail.image_9,
+        bidangDetail.image_10,
     ].filter((url) => url);
 
     return (
@@ -112,14 +107,12 @@ export default function ProgramDetailScreen() {
                     textColor="white"
                 />
                 <View style={styles.content}>
-                    {images.length > 0 && (
-                        <ImageGallery
-                            images={images}
-                            showNoDataModal={showNoDataModal}
-                            setShowNoDataModal={setShowNoDataModal}
-                            router={router}
-                        />
-                    )}
+                    <ImageGallery
+                        images={images}
+                        showNoDataModal={showNoDataModal}
+                        setShowNoDataModal={setShowNoDataModal}
+                        router={router}
+                    />
                 </View>
             </ScrollView>
         </>
