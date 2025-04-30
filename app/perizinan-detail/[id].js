@@ -17,6 +17,7 @@ import LoadingScreen from "../components/LoadingScreen";
 import StyledDescription from "../components/StyledDescription";
 import ImageViewing from "react-native-image-viewing";
 import { Image } from "expo-image";
+import ImageGallery from "../components/ImageGallery";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -114,60 +115,13 @@ export default function DetailPerizinanScreen() {
                 textColor="white"
             />
             <View style={styles.content}>
-                {imageUrls.length > 0 && (
-                    <View style={{ marginTop: 0 }}>
-                        {imageUrls.map((imageUrl, idx) => (
-                            <TouchableOpacity
-                                key={idx}
-                                onPress={() => openModal(imageUrl)}
-                                style={{ marginBottom: 20 }}>
-                                <Image
-                                    source={{ uri: imageUrl }}
-                                    style={{
-                                        width: screenWidth - 32,
-                                        height: 450,
-                                        borderRadius: 10,
-                                        alignSelf: "center",
-                                        marginBottom: 10,
-                                    }}
-                                    contentFit="cover"
-                                    placeholder={imageUrl} // Bisa di-set placeholder sementara
-                                    transition={1000}
-                                />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-            </View>
-
-            {/* Modal buat zoom gambar */}
-            {selectedImage && (
-                <ImageViewing
-                    images={selectedImage}
-                    imageIndex={0}
-                    visible={isImageVisible}
-                    onRequestClose={() => setIsImageVisible(false)}
-                />
-            )}
-
-            {/* Modal kalau gambar gak ada */}
-            <Modal visible={showNoDataModal} transparent animationType="fade">
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalText}>
-                            Data belum tersedia
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setShowNoDataModal(false);
-                                router.back();
-                            }}
-                            style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>Kembali</Text>
-                        </TouchableOpacity>
-                    </View>
+                    <ImageGallery
+                        images={imageUrls}
+                        showNoDataModal={showNoDataModal}
+                        setShowNoDataModal={setShowNoDataModal}
+                        router={router}
+                    />
                 </View>
-            </Modal>
         </ScrollView>
     );
 }

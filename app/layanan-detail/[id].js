@@ -15,7 +15,8 @@ import LoadingScreen from "../components/LoadingScreen";
 import StyledDescription from "../components/StyledDescription";
 import Header from "../components/Header";
 import ImageViewing from "react-native-image-viewing"; // Import ImageViewing untuk zoom effect
-import { Image } from 'expo-image';
+import { Image } from "expo-image";
+import ImageGallery from "../components/ImageGallery";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -113,60 +114,13 @@ export default function DetailLayananScreen() {
                 )}
 
                 {/* Render gambar */}
-                {imageUrls.length > 0 && (
-                    <View style={{ marginTop: 0 }}>
-                        {imageUrls.map((imageUrl, idx) => (
-                            <TouchableOpacity
-                                key={idx}
-                                onPress={() => openModal(imageUrl)} // Menampilkan gambar di modal
-                                style={{ marginBottom: 20 }}>
-                                <Image
-                                    source={{ uri: imageUrl }}
-                                    style={{
-                                        width: screenWidth - 32,
-                                        height: 450,
-                                        borderRadius: 10,
-                                        alignSelf: "center",
-                                        marginBottom: 10,
-                                    }}
-                                    contentFit="cover"
-                                    placeholder={imageUrl}  // Bisa di-set placeholder sementara
-                                    transition={1000}
-                                />
-                            </TouchableOpacity>
-                        ))}
-                    </View>
-                )}
-            </View>
-
-            {/* Modal untuk Zoom Gambar */}
-            {selectedImage && (
-                <ImageViewing
-                    images={selectedImage} // Tampilkan gambar yang dipilih
-                    imageIndex={0} // Menampilkan gambar pertama kali
-                    visible={isImageVisible} // Menampilkan modal
-                    onRequestClose={() => setIsImageVisible(false)} // Menutup modal
+                <ImageGallery
+                    images={imageUrls}
+                    showNoDataModal={showNoDataModal}
+                    setShowNoDataModal={setShowNoDataModal}
+                    router={router}
                 />
-            )}
-
-            {/* Modal jika gambar tidak tersedia */}
-            <Modal visible={showNoDataModal} transparent animationType="fade">
-                <View style={styles.modalOverlay}>
-                    <View style={styles.modalContainer}>
-                        <Text style={styles.modalText}>
-                            Data belum tersedia
-                        </Text>
-                        <TouchableOpacity
-                            onPress={() => {
-                                setShowNoDataModal(false);
-                                router.back();
-                            }}
-                            style={styles.modalButton}>
-                            <Text style={styles.modalButtonText}>Kembali</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
-            </Modal>
+            </View>
         </ScrollView>
     );
 }
