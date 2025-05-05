@@ -34,7 +34,7 @@ export default function ProgramDetailScreen() {
             try {
                 const { data, error } = await supabase
                     .from("tb_bidang_detail")
-                    .select("*")
+                    .select("*, tb_bidang(description)") 
                     .eq("id", Number(id))
                     .maybeSingle();
 
