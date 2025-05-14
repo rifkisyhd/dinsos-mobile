@@ -4,7 +4,6 @@ import {
     Text,
     ScrollView,
     TouchableOpacity,
-    Image,
     Dimensions,
     Modal,
 } from "react-native";
@@ -14,6 +13,8 @@ import { styles } from "./styles";
 import LoadingScreen from "../components/LoadingScreen";
 import Header from "../components/Header";
 import ImageViewing from "react-native-image-viewing";
+import { Image } from "expo-image";
+import ImageGallery from "../components/ImageGallery";
 
 const screenWidth = Dimensions.get("window").width;
 
@@ -33,22 +34,7 @@ export default function ProgramDetailScreen() {
             try {
                 const { data, error } = await supabase
                     .from("tb_bidang_detail")
-                    .select(
-                        `
-            id,
-            description,
-            bidang_id,
-            image_1,
-            image_2,
-            image_3,
-            image_4,
-            image_5,
-            tb_bidang (
-              id,
-              description
-            )
-          `,
-                    )
+                    .select("*, tb_bidang(description)") 
                     .eq("id", Number(id))
                     .maybeSingle();
 
@@ -62,6 +48,11 @@ export default function ProgramDetailScreen() {
                     data.image_3,
                     data.image_4,
                     data.image_5,
+                    data.image_6,
+                    data.image_7,
+                    data.image_8,
+                    data.image_9,
+                    data.image_10,
                 ].filter((url) => url);
 
                 if (images.length === 0) {
@@ -98,6 +89,11 @@ export default function ProgramDetailScreen() {
         bidangDetail.image_3,
         bidangDetail.image_4,
         bidangDetail.image_5,
+        bidangDetail.image_6,
+        bidangDetail.image_7,
+        bidangDetail.image_8,
+        bidangDetail.image_9,
+        bidangDetail.image_10,
     ].filter((url) => url);
 
     return (
@@ -111,63 +107,13 @@ export default function ProgramDetailScreen() {
                     textColor="white"
                 />
                 <View style={styles.content}>
-                    {images.length > 0 && (
-                        <View style={styles.imagesWrapper}>
-                            {images.map((img, idx) => (
-                                <TouchableOpacity
-                                    key={idx}
-                                    onPress={() => {
-                                        setSelectedImage([{ uri: img }]);
-                                        setIsImageVisible(true);
-                                    }}
-                                    style={styles.imageTouchable}>
-                                    <Image
-                                        source={{ uri: img }}
-                                        style={[
-                                            styles.image,
-                                            { width: screenWidth - 32 },
-                                        ]}
-                                        resizeMode="cover"
-                                    />
-                                </TouchableOpacity>
-                            ))}
-                        </View>
-                    )}
-                </View>
-
-                {/* Modal Zoom Gambar */}
-                {selectedImage && (
-                    <ImageViewing
-                        images={selectedImage}
-                        imageIndex={0}
-                        visible={isImageVisible}
-                        onRequestClose={() => setIsImageVisible(false)}
+                    <ImageGallery
+                        images={images}
+                        showNoDataModal={showNoDataModal}
+                        setShowNoDataModal={setShowNoDataModal}
+                        router={router}
                     />
-                )}
-
-                {/* Popup jika gambar tidak ada */}
-                <Modal
-                    visible={showNoDataModal}
-                    transparent
-                    animationType="fade">
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContainer}>
-                            <Text style={styles.modalText}>
-                                Data belum tersedia
-                            </Text>
-                            <TouchableOpacity
-                                onPress={() => {
-                                    setShowNoDataModal(false);
-                                    router.back();
-                                }}
-                                style={styles.modalButton}>
-                                <Text style={styles.modalButtonText}>
-                                    Kembali
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
+                </View>
             </ScrollView>
         </>
     );
