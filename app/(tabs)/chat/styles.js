@@ -111,8 +111,8 @@ export const styles = StyleSheet.create({
     width: 40,
     borderRadius: 20,
     position: 'absolute',
-    right: 15,
-    bottom: 12,
+    right: 11,
+    bottom: 10,
   },
   sendButtonDisabled: {
     backgroundColor: '#ccc',

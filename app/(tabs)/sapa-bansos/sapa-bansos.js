@@ -25,9 +25,7 @@ const PROGRAM_LIST = [
     "ASPD",
     "kpm-jawara",
     "putri-jawara",
-    "lkspd",
     "eks-ppks-jawara",
-    "kemandirian-eks-ppks-jawara",
 ];
 
 const DataTable = () => {
@@ -138,59 +136,25 @@ const DataTable = () => {
     // Deteksi kolom berdasarkan data
     const detectColumns = (dataItem) => {
         const detectedColumns = [];
-
-        // Cek apakah data adalah data individu (PKH+)
-        if (dataItem.nik && dataItem.nama) {
-            // Format data individu (PKH+)
-            detectedColumns.push({ id: 'nama', label: 'Nama', style: styles.cellNama });
-            
-            if (dataItem.nik) {
-                detectedColumns.push({ id: 'nik', label: 'NIK', style: styles.cellNik });
-            }
-            
-            if (dataItem.alamat) {
-                detectedColumns.push({ id: 'alamat', label: 'Alamat', style: styles.cellLocation });
-            }
-            
-            if (dataItem.kabupaten) {
-                detectedColumns.push({ id: 'kabupaten', label: 'Kabupaten', style: styles.cellLocation });
-            }
-            
-            if (dataItem.kecamatan) {
-                detectedColumns.push({ id: 'kecamatan', label: 'Kecamatan', style: styles.cellLocation });
-            }
-            
-            if (dataItem.kelurahan) {
-                detectedColumns.push({ id: 'kelurahan', label: 'Kelurahan', style: styles.cellLocation });
-            }
-        }
         // Cek apakah data adalah agregasi (ASPD)
-        else if (dataItem.kabupaten && (dataItem.sp2d !== undefined || dataItem.dana !== undefined)) {
+        if (dataItem.kabupaten && (dataItem.sp2d !== undefined || dataItem.dana !== undefined)) {
             // Format data agregasi (ASPD)
             detectedColumns.push({ id: 'kabupaten', label: 'Kabupaten', style: styles.cellKabupaten });
             
-            if (dataItem.program) {
-                detectedColumns.push({ id: 'program', label: 'Program', style: styles.cellLocation });
-            }
-            
             if (dataItem.sp2d !== undefined) {
-                detectedColumns.push({ id: 'sp2d', label: 'SP2D', style: styles.cellNumeric });
+                detectedColumns.push({ id: 'sp2d', label: 'SP2D', style: styles.cellsp2d });
             }
-            
             if (dataItem.dana !== undefined) {
                 detectedColumns.push({ id: 'dana', label: 'Dana', style: styles.cellNumeric, format: 'currency' });
             }
-            
             if (dataItem.tersalur !== undefined) {
-                detectedColumns.push({ id: 'tersalur', label: 'Tersalur (%)', style: styles.cellNumeric, format: 'percent' });
+                detectedColumns.push({ id: 'tersalur', label: 'Tersalur', style: styles.celltersalur, format: 'percent' });
             }
         }
-        
         // Tambahkan kolom periode jika ada
         if (dataItem.periode) {
             detectedColumns.push({ id: 'periode', label: 'Periode', style: styles.cellPeriode });
         }
-        
         // Jika tidak terdeteksi format tertentu, gunakan Object.keys untuk mendapatkan semua kolom
         if (detectedColumns.length === 0) {
             const keys = Object.keys(dataItem);
@@ -204,8 +168,6 @@ const DataTable = () => {
                 } else if (['dana', 'sp2d', 'tersalur'].includes(key)) {
                     style = styles.cellNumeric;
                     format = key === 'dana' ? 'currency' : (key === 'tersalur' ? 'percent' : null);
-                } else if (key === 'periode') {
-                    style = styles.cellPeriode;
                 } else {
                     style = styles.cellDefault;
                 }

@@ -51,42 +51,38 @@ export const styles = StyleSheet.create({
     // Default cell untuk kolom apa saja
     cellDefault: {
         flex: 1,
-        fontSize: 14,
+        fontSize: 10,
         paddingHorizontal: 5,
     },
     // Kolom untuk data agregasi (ASPD, BLT, dll)
     cellKabupaten: {
-        flex: 2,
-        fontSize: 14,
-        paddingHorizontal: 5,
-    },
-    cellNumeric: {
-        flex: 1,
-        fontSize: 14,
-        paddingHorizontal: 5,
-        textAlign: "right",
-    },
-    cellPeriode: {
-        flex: 1,
+        flex: 2.5,
         fontSize: 10,
         paddingHorizontal: 5,
     },
-    // Kolom untuk data beneficiary (PKH+, dll)
-    cellNama: {
-        flex: 2,
-        fontSize: 14,
+    cellsp2d: {
+        flex: 1.5,
+        fontSize: 9,
         paddingHorizontal: 5,
+        textAlign: "center",
     },
-    cellNik: {
-        flex: 2,
-        fontSize: 12,
+    cellNumeric: {
+        flex: 3,
+        fontSize: 9,
         paddingHorizontal: 5,
-        fontFamily: Platform.OS === 'ios' ? 'Courier' : 'monospace',
+        textAlign: "center",
     },
-    cellLocation: {
-        flex: 1,
-        fontSize: 12,
+    celltersalur: {
+        flex: 1.8,
+        fontSize: 9,
         paddingHorizontal: 5,
+        textAlign: "center",
+    },
+    cellPeriode: {
+        flex: 1.8,
+        fontSize: 9,
+        paddingHorizontal: 5,
+        textAlign: "center",
     },
     header: {
         backgroundColor: "#33A9FF",

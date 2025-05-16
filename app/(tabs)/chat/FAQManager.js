@@ -75,7 +75,7 @@ export class FAQManager {
         1. Jawab dengan bahasa yang ramah dan sopan
         2. Jika pertanyaan tidak ada dalam FAQ, katakan dengan jujur bahwa Anda tidak memiliki informasi dan sarankan untuk menghubungi Dinas Sosial
         3. Berikan jawaban singkat dan langsung ke intinya
-        4. Jangan mengada-ada informasi yang tidak ada dalam FAQ
+        4. Jangan menjawab terlalu kaku dan membahas tentang FAQ dalam kalimat
         5. Jawab dalam Bahasa Indonesia
         `;
     }
