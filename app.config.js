@@ -54,7 +54,11 @@ export default {
       EXPO_PUBLIC_OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
       supabaseUrl: process.env.SUPABASE_URL,
       supabaseAnonKey: process.env.SUPABASE_ANON_KEY,
-      API_TOKEN: process.env.API_TOKEN
+      API_TOKEN: process.env.API_TOKEN,
+      
+      eas: {
+        projectId: "dbd873e5-42a7-4a5a-bed7-3c1dcac33aa8"
+      }
     },
   },
 };
