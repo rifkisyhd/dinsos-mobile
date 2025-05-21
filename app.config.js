@@ -30,12 +30,11 @@ export default {
   
       web: {
         bundler: "metro",
-        output: "static",
+        output: "standalone",
         favicon: "./assets/images/favicon.png",
       },
   
       plugins: [
-        "expo-router",
         [
           "expo-splash-screen",
           {
@@ -47,9 +46,6 @@ export default {
         ],
       ],
   
-      experiments: {
-        typedRoutes: true,
-      },
     extra: {
       EXPO_PUBLIC_OPENAI_API_KEY: process.env.EXPO_PUBLIC_OPENAI_API_KEY,
       supabaseUrl: process.env.SUPABASE_URL,
