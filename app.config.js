@@ -53,7 +53,7 @@ export default {
       API_TOKEN: process.env.API_TOKEN,
       
       eas: {
-        projectId: "dbd873e5-42a7-4a5a-bed7-3c1dcac33aa8"
+        projectId: "541b73b5-3f81-419c-8eac-73064415090e"
       }
     },
   },
