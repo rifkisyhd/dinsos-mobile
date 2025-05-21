@@ -1,3 +1,4 @@
+import React, { useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "./screens/TabNavigator.js";
@@ -38,7 +39,7 @@ export default function App() {
   }, []);
 
 
-  
+
   return (
     <NavigationContainer>
       <Stack.Navigator>
