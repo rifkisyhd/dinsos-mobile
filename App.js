@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { NavigationContainer } from "@react-navigation/native";
 import TabNavigator from "./screens/TabNavigator.js";
+import * as SplashScreen from "expo-splash-screen";
 
 import InnovationScreen from "./screens/innovasi/innovasi";
 import LayananScreen from "./screens/layanan/layanan";
@@ -19,6 +20,25 @@ import UptDetail from "./screens/upt-detail/UptDetail"
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  useEffect(() => {
+    async function prepare() {
+      try {
+        await SplashScreen.preventAutoHideAsync(); // cegah auto hide splash screen
+        // bisa taruh loading data async di sini kalau ada
+
+      } catch (e) {
+        console.warn(e);
+      } finally {
+        await SplashScreen.hideAsync(); // setelah siap, sembunyikan splash screen
+      }
+    }
+
+    prepare();
+  }, []);
+
+
+  
   return (
     <NavigationContainer>
       <Stack.Navigator>
@@ -40,3 +60,4 @@ export default function App() {
     </NavigationContainer>
   );
 }
+
