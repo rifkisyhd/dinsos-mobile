@@ -103,7 +103,8 @@ height: 300,
 
   main: {
     flex: 1,
-    backgroundColor: "#eaeaea",
+    // backgroundColor: "#eaeaea",
+    backgroundColor: "red",
     paddingBottom: 20,
   },
 });

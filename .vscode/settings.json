@@ -1,17 +1,22 @@
 {
-    "workbench.sideBar.location": "left",
-    "editor.quickSuggestions": {
-        "other": true,
-        "comments": false,
-        "strings": true
-    },
-    "editor.suggestOnTriggerCharacters": true,
-    "editor.tabCompletion": "on",
-    "editor.tokenColorCustomizations": {
-        "comments": "",
-        "textMateRules": []
-    },
-    "editor.fontSize": 14,
-    "terminal.integrated.fontFamily": "",
-    "terminal.integrated.fontSize": 11
+  "workbench.sideBar.location": "left",
+  "editor.quickSuggestions": {
+    "other": true,
+    "comments": false,
+    "strings": true
+  },
+  "editor.suggestOnTriggerCharacters": true,
+  "editor.tabCompletion": "on",
+  "editor.tokenColorCustomizations": {
+    "comments": "",
+    "textMateRules": []
+  },
+  "editor.fontSize": 14,
+  "terminal.integrated.fontFamily": "",
+  "terminal.integrated.fontSize": 11,
+  "workbench.colorCustomizations": {
+    "activityBar.background": "#470440",
+    "titleBar.activeBackground": "#470440",
+    "titleBar.activeForeground": "#fcfcf9"
+  }
 }
